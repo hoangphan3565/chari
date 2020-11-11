@@ -19,16 +19,16 @@ public class Collaborator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer CLB_ID;
 
-    @Column
+    @Column(length=200)
     private String fullName;
 
-    @Column
+    @Column(length=200)
     private String address;
 
-    @Column
+    @Column(length=10)
     private String phoneNumber;
 
-    @Column
+    @Column(length=500)
     private String certificate;
 
     @JsonIgnore

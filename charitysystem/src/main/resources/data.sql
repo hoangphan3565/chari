@@ -14,11 +14,25 @@ insert into supported_people(full_name,address,phone_number,bank_account) values
 insert into supported_people(full_name,address,phone_number,bank_account) values('Phan Văn Thành','Long An','092312322','454343231233');
 
 
-insert into project(project_code,project_name,description,start_date,end_date,target_money,video_url,prt_id,stp_id,clb_id) values('G10001','Xây cầu tình thương cho làng An Phú 1','Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','2020-11-05','2021-03-05',40000000,'url of video',1,1,1);
-insert into project(project_code,project_name,description,start_date,end_date,target_money,video_url,prt_id,stp_id,clb_id) values('G10002','Xây cầu tình thương cho làng An Phú 2','Làng An Phú 2 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','2020-12-15','2021-04-15',40000000,'url of video',1,1,1);
-insert into project(project_code,project_name,description,start_date,end_date,target_money,video_url,prt_id,stp_id,clb_id) values('G10003','Xây cầu tình thương cho làng An Phú 3','Làng An Phú 3 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','2020-12-30','2021-04-30',40000000,'url of video',1,1,1);
+insert into project(project_code,project_name,brief_description,description,start_date,end_date,target_money,image_url,video_url,prt_id,stp_id,clb_id) values('G10001','Xây cầu tình thương cho làng An Phú 1','Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','2020-10-01','2020-11-15',20000000,'https://hieuvetraitim.com/attachments/hoan-canh-gioi-thieu-jpg.1782/','url of video',1,1,1);
+insert into project(project_code,project_name,brief_description,description,start_date,end_date,target_money,image_url,video_url,prt_id,stp_id,clb_id) values('G10002','Xây cầu tình thương cho làng An Phú 2','Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','Làng An Phú 2 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','2020-10-01','2020-12-01',30000000,'https://hieuvetraitim.com/attachments/hoan-canh-gioi-thieu-jpg.1782/','url of video',1,1,1);
+insert into project(project_code,project_name,brief_description,description,start_date,end_date,target_money,image_url,video_url,prt_id,stp_id,clb_id) values('G10003','Xây cầu tình thương cho làng An Phú 3','Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','Làng An Phú 3 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','2020-11-01','2021-01-01',40000000,'https://hieuvetraitim.com/attachments/hoan-canh-gioi-thieu-jpg.1782/','url of video',1,1,1);
 
-insert into project_images(title,image_url,is_default,order_number,prj_id) values('Chiếc cầu tre tạm bợ tại làng An Phú','url of image',true,1,1);
-insert into project_images(title,image_url,is_default,order_number,prj_id) values('Chiếc cầu tre tạm bợ tại làng An Phú','url of image',false,2,1);
-insert into project_images(title,image_url,is_default,order_number,prj_id) values('Chiếc cầu tre tạm bợ tại làng An Phú','url of image',false,3,1);
+insert into project_images(title,image_url,order_number,prj_id) values('Chiếc cầu tre tạm bợ tại làng An Phú','url of image',1,1);
+insert into project_images(title,image_url,order_number,prj_id) values('Chiếc cầu tre tạm bợ tại làng An Phú','url of image',2,1);
+insert into project_images(title,image_url,order_number,prj_id) values('Chiếc cầu tre tạm bợ tại làng An Phú','url of image',3,1);
 
+insert into donate_activity(dnt_id,prj_id) values(1,1);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-05',5000000,1);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-07',5000000,1);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-08',5000000,1);
+
+insert into donate_activity(dnt_id,prj_id) values(1,2);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-05',5000000,2);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-07',5000000,2);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-08',5000000,2);
+
+insert into donate_activity(dnt_id,prj_id) values(1,3);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-05',5000000,3);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-07',6000000,3);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-08',7000000,3);

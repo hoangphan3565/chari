@@ -19,13 +19,13 @@ public class Donator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer DNT_ID;
 
-    @Column
+    @Column(length=200)
     private String fullName;
 
-    @Column
+    @Column(length=200)
     private String address;
 
-    @Column
+    @Column(length=10)
     private String phoneNumber;
 
     @JsonIgnore

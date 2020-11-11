@@ -25,16 +25,16 @@ public class SupportedPeople {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer STP_ID;
 
-    @Column
+    @Column(length=200)
     private String fullName;
 
-    @Column
+    @Column(length=200)
     private String address;
 
-    @Column
+    @Column(length=10)
     private String phoneNumber;
 
-    @Column
+    @Column(length=50)
     private String bankAccount;
 
     @JsonIgnore

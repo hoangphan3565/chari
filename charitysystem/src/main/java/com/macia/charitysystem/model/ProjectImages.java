@@ -18,14 +18,11 @@ public class ProjectImages {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer PRI_ID;
 
-    @Column
+    @Column(length=200)
     private String title;
 
-    @Column
+    @Column(length=500)
     private String imageUrl;
-
-    @Column
-    private Boolean isDefault;
 
     @Column
     private Integer orderNumber;

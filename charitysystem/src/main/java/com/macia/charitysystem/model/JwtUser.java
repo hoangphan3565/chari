@@ -22,7 +22,7 @@ public class JwtUser implements Serializable {
     @Column(unique = true)
     private String username;
 
-    @Column
+    @Column(length=200)
     private String password;
 
     @Enumerated(EnumType.STRING)

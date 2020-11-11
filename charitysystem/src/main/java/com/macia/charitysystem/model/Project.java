@@ -2,10 +2,8 @@ package com.macia.charitysystem.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jayway.jsonpath.internal.function.numeric.Max;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.macia.charitysystem.DTO.ProjectDTO;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -27,6 +25,54 @@ import java.util.List;
         @NamedQuery(name = "named.project.findAllProjectLikeProjectName",
                 query = "from Project p where LOWER(p.projectName) like '%' || LOWER(:projectName) ||'%'"),
 })
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(
+                name = "named_getProjectDTOList",
+                resultSetMappings = "ProjectMapping",
+                procedureName = "get_projects_dto"
+        ),
+        @NamedStoredProcedureQuery(
+                name = "named_getProjectDTOListByType",
+                resultSetMappings = "ProjectMapping",
+                procedureName = "get_projects_dto_by_type",
+                parameters = {
+                        @StoredProcedureParameter(name="prtid",
+                                                  mode=ParameterMode.IN,
+                                                  type=Integer.class)
+                }
+        ),
+        @NamedStoredProcedureQuery(
+                name = "named_getProjectDTOById",
+                resultSetMappings = "ProjectMapping",
+                procedureName = "get_project_dto_by_id",
+                parameters = {
+                        @StoredProcedureParameter(name="id",
+                                mode=ParameterMode.IN,
+                                type=Integer.class)
+                }
+        )
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(
+                name="ProjectMapping",
+                classes = @ConstructorResult(targetClass = ProjectDTO.class,
+                        columns = {
+                                @ColumnResult(name="prj_id",type = Integer.class),
+                                @ColumnResult(name="project_code",type = String.class),
+                                @ColumnResult(name="project_name",type = String.class),
+                                @ColumnResult(name="brief_description",type = String.class),
+                                @ColumnResult(name="image_url",type = String.class),
+                                @ColumnResult(name="video_url",type = String.class),
+                                @ColumnResult(name="target_money",type = Integer.class),
+                                @ColumnResult(name="cur_money",type = Integer.class),
+                                @ColumnResult(name="num_of_donations",type = Integer.class),
+                                @ColumnResult(name="remaining_term",type = Integer.class),
+                                @ColumnResult(name="prt_id",type = Integer.class),
+                                @ColumnResult(name="project_type_name",type = String.class)
+
+                        })
+        ),
+})
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +81,13 @@ public class Project {
     @Column(length = 10,unique = true)
     private String projectCode;
 
-    @Column(length = 200)
+    @Column(length = 300)
     private String projectName;
 
-    @Column(length = 5000)
+    @Column(length = 500)
+    private String briefDescription;
+
+    @Column(length = 4000)
     private String description;
 
     @Column
@@ -55,6 +104,9 @@ public class Project {
 
     @Column(length = 500)
     private String videoUrl;
+
+    @Column(length = 500)
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "prt_id")

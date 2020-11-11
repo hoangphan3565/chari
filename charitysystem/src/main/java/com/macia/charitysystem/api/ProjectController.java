@@ -34,18 +34,18 @@ public class ProjectController {
 
     @GetMapping()
     public ResponseEntity<?> getAllProject(){
-        return ResponseEntity.ok().body(projectService.findAllProject());
+        return ResponseEntity.ok().body(projectService.findAllProjectDTO());
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProjectById(@PathVariable(value = "id") Integer id) {
-        return ResponseEntity.ok().body(projectService.findProjectById(id));
+        return ResponseEntity.ok().body(projectService.findProjectDTOById(id));
     }
 
     @GetMapping("/type/{id}")
     public ResponseEntity<?> getProjectByTypeId(@PathVariable(value = "id") Integer id) {
-        return ResponseEntity.ok().body(projectService.findProjectByTypeId(id));
+        return ResponseEntity.ok().body(projectService.findAllProjectDTOByType(id));
     }
 
     @PostMapping()

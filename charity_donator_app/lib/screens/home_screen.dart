@@ -3,15 +3,18 @@ import 'package:charity_donator_app/components/rounded_input_field.dart';
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/components/rounded_button.dart';
 import 'package:charity_donator_app/API.dart';
+import 'package:charity_donator_app/models/Project.dart';
 
 
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:convert' show utf8;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:unicode/unicode.dart' as unicode;
 
 
 class HomeScreen extends StatefulWidget {
@@ -22,6 +25,25 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>{
   TextEditingController _searchController = TextEditingController();
 
+  var projects = new List<Project>();
+
+  _getProjects() async{
+    API.getProjects().then((response) {
+      setState(() {
+        List<dynamic> list = json.decode(utf8.decode(response.bodyBytes));
+        projects = list.map((model) => Project.fromJson(model)).toList();
+      });
+    });
+  }
+
+  initState() {
+    super.initState();
+    _getProjects();
+  }
+
+  dispose() {
+    super.dispose();
+  }
 
   testGetDataWithToken() async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -31,13 +53,22 @@ class _HomeScreenState extends State<HomeScreen>{
       return;
     }
     else{
-      String url = baseUrl+projects+"/test";
+      String url = baseUrl+"/projects"+"/test";
       var jsonResponse;
       final res = await http.get(url, headers:getHeaderJWT(token));
       jsonResponse = json.decode(res.body);
       print("Response status: ${res.statusCode}");
       print("Response body: ${res.body}");
     }
+  }
+
+  getProjectDetails() async{
+    API.getProjectDetails(1).then((response) {
+      setState(() {
+        List<dynamic> list = json.decode(utf8.decode(response.bodyBytes));
+        projects = list.map((model) => Project.fromJson(model)).toList();
+      });
+    });
   }
 
   int _selectedItemIndex = 0;
@@ -50,39 +81,25 @@ class _HomeScreenState extends State<HomeScreen>{
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            TextField(
+              controller: _searchController,
+              cursorColor: kPrimaryColor,
+              decoration: InputDecoration(
+                icon: Icon(
+                  Icons.search,
+                  color: kPrimaryColor,
+                ),
+                hintText: "Tìm kiếm",
+                border: InputBorder.none,
+              ),
+            ),
             //Danh sách bài viết
             Expanded(
-              child: ListView(
-                padding: EdgeInsets.only(top: 8),
-                children: [
-                  TextField(
-                    controller: _searchController,
-                    cursorColor: kPrimaryColor,
-                    decoration: InputDecoration(
-                      icon: Icon(
-                        Icons.search,
-                        color: kPrimaryColor,
-                      ),
-                      hintText: "Tìm kiếm",
-                      border: InputBorder.none,
-                    ),
-                  ),
-                  buildPostSection(
-                      "https://hieuvetraitim.com/attachments/hoan-canh-gioi-thieu-jpg.1782/",
-                      "Tên của một dự án, hoàn cảnh khó khăn, gì đó,.... ",
-                      "Nội dung vắn tắt của hoàn cảnh khó khăn cần được hỗ trợ, Nội dung vắn tắt của hoàn cảnh khó khăn cần được hỗ trợ",
-                      "100.000",50,5000000,7000000),
-                  buildPostSection(
-                      "https://lh3.googleusercontent.com/proxy/G_rQiHWDaJmB1yVTbbBg0sBFC7wXsXp2rT9PQGdjOQaotzWAmqyj4xza6IoerqPgTy43zxJYjh3eJsNHv9cz99MTqED_WiwKEwJbSre5_a8KSQgpheT5-rC8vlVW0WsP",
-                      "Day la ten cua du an 2",
-                      "Day la noi dung van tat cua du an, Day la noi dung van tat cua du an, Day la noi dung van tat cua du an ",
-                      "100.000",30,6000000,7000000),
-                  buildPostSection(
-                      "https://loisusong.net/wp-content/uploads/2019/01/Tu-thien-tai-Son-La-5.jpg",
-                      "Day la ten cua du an 3",
-                      "Day la noi dung van tat cua du an, Day la noi dung van tat cua du an, Day la noi dung van tat cua du an ",
-                      "100.000",100,6800000,7000000),
-                ],
+              child:  ListView.builder(
+                itemCount: projects.length,
+                itemBuilder: (context, index) {
+                  return buildPostSection(projects[index].image_url,projects[index].project_name,projects[index].brief_description,projects[index].num_of_donations,projects[index].remaining_term,projects[index].cur_money,projects[index].target_money);
+                },
               ),
             )
           ],
@@ -134,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen>{
     );
   }
 
-  Container buildPostSection(String urlPost, String projectName,String briefInformation, String numOfDonations,int remainingTerm,int curMoney,int targetMoney) {
+  Container buildPostSection(String urlPost, String projectName,String briefInformation, int numOfDonations,int remainingTerm,int curMoney,int targetMoney) {
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -194,7 +211,8 @@ class _HomeScreenState extends State<HomeScreen>{
       children: [
         InkWell(
           onTap: ()=>{
-            print("test!!!")
+            print("test!!!"),
+            getProjectDetails()
           },
           child: Container(
             height: MediaQuery.of(context).size.width - 200,
@@ -223,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen>{
     );
   }
 
-  Row buildInfoDetailsRow(String numOfDonations,int remainingTerm) {
+  Row buildInfoDetailsRow(int numOfDonations,int remainingTerm) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -240,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen>{
                   ),
                 ),
                 Text(
-                  numOfDonations,
+                  numOfDonations.toString(),
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

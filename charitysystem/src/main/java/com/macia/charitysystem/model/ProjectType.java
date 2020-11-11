@@ -26,10 +26,10 @@ public class ProjectType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer PRT_ID;
 
-    @Column(unique = true)
+    @Column(unique = true,length=10)
     private String ProjectTypeCode;
 
-    @Column
+    @Column(length=50)
     private String ProjectTypeName;
 
     @JsonIgnore
