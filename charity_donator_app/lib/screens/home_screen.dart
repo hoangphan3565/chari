@@ -4,6 +4,7 @@ import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/components/rounded_button.dart';
 import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/models/Project.dart';
+import 'package:charity_donator_app/screens/projectdetails_screen.dart';
 
 
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen>{
   TextEditingController _searchController = TextEditingController();
 
   var projects = new List<Project>();
+  var project = new  List<Project>();
 
   _getProjects() async{
     API.getProjects().then((response) {
@@ -37,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen>{
   }
 
   initState() {
-    super.initState();
     _getProjects();
+    super.initState();
   }
 
   dispose() {
@@ -62,11 +64,12 @@ class _HomeScreenState extends State<HomeScreen>{
     }
   }
 
-  getProjectDetails() async{
-    API.getProjectDetails(1).then((response) {
+  getProjectDetails(int id) async{
+    API.getProjectDetails(id).then((response) {
       setState(() {
         List<dynamic> list = json.decode(utf8.decode(response.bodyBytes));
-        projects = list.map((model) => Project.fromJson(model)).toList();
+        project = list.map((model) => Project.fromJson(model)).toList();
+        print(project[0].project_name);
       });
     });
   }
@@ -98,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen>{
               child:  ListView.builder(
                 itemCount: projects.length,
                 itemBuilder: (context, index) {
-                  return buildPostSection(projects[index].image_url,projects[index].project_name,projects[index].brief_description,projects[index].num_of_donations,projects[index].remaining_term,projects[index].cur_money,projects[index].target_money);
+                  return buildPostSection(projects[index].prj_id,projects[index].image_url,projects[index].project_name,projects[index].brief_description,projects[index].num_of_donations,projects[index].remaining_term,projects[index].cur_money,projects[index].target_money);
                 },
               ),
             )
@@ -151,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen>{
     );
   }
 
-  Container buildPostSection(String urlPost, String projectName,String briefInformation, int numOfDonations,int remainingTerm,int curMoney,int targetMoney) {
+  Container buildPostSection(int id,String urlPost, String projectName,String briefInformation, int numOfDonations,int remainingTerm,int curMoney,int targetMoney) {
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -162,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen>{
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildPostPicture(urlPost),  //Hình ảnh mặc định của bài viết
+          buildPostPicture(id,urlPost),  //Hình ảnh mặc định của bài viết
           SizedBox(
             height: 10,
           ),
@@ -206,13 +209,17 @@ class _HomeScreenState extends State<HomeScreen>{
     );
   }
 
-  Stack buildPostPicture(String urlPost) {
+  Stack buildPostPicture(int id,String image_url) {
     return Stack(
       children: [
         InkWell(
           onTap: ()=>{
-            print("test!!!"),
-            getProjectDetails()
+            print("test on tap image"),
+            getProjectDetails(id),
+            Navigator.push(
+            context,
+               MaterialPageRoute(builder: (context) => ProjectDetailsScreen(id: id)),
+            ),
           },
           child: Container(
             height: MediaQuery.of(context).size.width - 200,
@@ -228,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen>{
                 ],
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(urlPost),
+                  image: NetworkImage(image_url),
                 )),
           ),
         ),
@@ -335,6 +342,4 @@ class _HomeScreenState extends State<HomeScreen>{
           )
         ]);
   }
-
-
 }

@@ -11,6 +11,7 @@ public class ProjectDTO {
     private String project_code;
     private String project_name;
     private String brief_description;
+    private String description;
     private String image_url;
     private String video_url;
     private Integer target_money;

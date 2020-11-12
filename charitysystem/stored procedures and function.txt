@@ -1,87 +1,62 @@
-create or replace function get_projects_dto (
-) 
-	returns table (
-		prj_id int,
-		project_code varchar,
-		project_name varchar,
-		brief_description varchar,
-		image_url varchar,
-    	video_url varchar,
-		target_money int,
-		cur_money int,
-		num_of_donations int,
-		remaining_term int,
-		prt_id int,
-		project_type_name varchar
-	) 
-	language plpgsql
-as $$
+
+CREATE OR REPLACE FUNCTION public.get_projects_dto(
+	)
+    RETURNS TABLE(prj_id integer, project_code character varying, project_name character varying, brief_description character varying, description character varying, image_url character varying, video_url character varying, target_money integer, cur_money integer, num_of_donations integer, remaining_term integer, prt_id integer, project_type_name character varying) 
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+    ROWS 1000
+    
+AS $BODY$
 begin
 	return query 
-		select 	pr.prj_id, pr.project_code, pr.project_name,pr. brief_description,pr.image_url,pr.video_url,pr.target_money, sum(dd.money)::integer as cur_money,count(dd.dnd_id)::integer as num_of_donations,(pr.end_date-DATE(now())) as remaining_term,pt.prt_id,pt.project_type_name
+		select 	pr.prj_id, pr.project_code, pr.project_name,pr.brief_description,pr.description,pr.image_url,pr.video_url,pr.target_money, sum(dd.money)::integer as cur_money,count(dd.dnd_id)::integer as num_of_donations,(pr.end_date-DATE(now())) as remaining_term,pt.prt_id,pt.project_type_name
 		from project pr, donate_activity da, donate_details dd,project_type pt
 		where pr.prj_id=da.prj_id and da.dna_id=dd.dna_id and pr.prt_id=pt.prt_id
 		group by pr.prj_id,pt.prt_id,pt.project_type_name;
-end;$$
+end;
+$BODY$;
 
-select * from get_projects_dto()
 
+CREATE OR REPLACE FUNCTION public.get_projects_dto_by_type(
+	_prt_id integer)
+    RETURNS TABLE(prj_id integer, project_code character varying, project_name character varying, brief_description character varying,description character varying, image_url character varying, video_url character varying, target_money integer, cur_money integer, num_of_donations integer, remaining_term integer, prt_id integer, project_type_name character varying) 
+    LANGUAGE 'plpgsql'
 
-create or replace function get_projects_dto_by_type (_prt_id int) 
-	returns table (
-		prj_id int,
-		project_code varchar,
-		project_name varchar,
-		brief_description varchar,
-		image_url varchar,
-    	video_url varchar,
-		target_money int,
-		cur_money int,
-		num_of_donations int,
-		remaining_term int,
-		prt_id int,
-		project_type_name varchar
-	) 
-	language plpgsql
-as $$
+    COST 100
+    VOLATILE 
+    ROWS 1000
+    
+AS $BODY$
 begin
 	return query 
-		select 	pr.prj_id, pr.project_code, pr.project_name,pr. brief_description,pr.image_url,pr.video_url, pr.target_money, sum(dd.money)::integer as cur_money,count(dd.dnd_id)::integer as num_of_donations,(pr.end_date-DATE(now())) as remaining_term,pt.prt_id,pt.project_type_name
+		select 	pr.prj_id, pr.project_code, pr.project_name,pr.brief_description,pr.description,pr.image_url,pr.video_url, pr.target_money, sum(dd.money)::integer as cur_money,count(dd.dnd_id)::integer as num_of_donations,(pr.end_date-DATE(now())) as remaining_term,pt.prt_id,pt.project_type_name
 		from project pr, donate_activity da, donate_details dd, project_type pt
 		where pr.prj_id=da.prj_id and da.dna_id=dd.dna_id and pr.prt_id=pt.prt_id and pt.prt_id=_prt_id
 		group by pr.prj_id,pt.prt_id,pt.project_type_name;
-end;$$
+end;
+$BODY$;
 
-select * from get_projects_dto_by_type(1)
 
+CREATE OR REPLACE FUNCTION public.get_project_dto_by_id(
+	_id integer)
+    RETURNS TABLE(prj_id integer, project_code character varying, project_name character varying, brief_description character varying,description character varying, image_url character varying, video_url character varying, target_money integer, cur_money integer, num_of_donations integer, remaining_term integer, prt_id integer, project_type_name character varying) 
+    LANGUAGE 'plpgsql'
 
-create or replace function get_project_dto_by_id (_id int) 
-	returns table (
-		prj_id int,
-		project_code varchar,
-		project_name varchar,
-		brief_description varchar,
-		image_url varchar,
-    	video_url varchar,
-		target_money int,
-		cur_money int,
-		num_of_donations int,
-		remaining_term int,
-		prt_id int,
-		project_type_name varchar
-	) 
-	language plpgsql
-as $$
+    COST 100
+    VOLATILE 
+    ROWS 1000
+    
+AS $BODY$
 begin
 	return query 
-		select 	pr.prj_id, pr.project_code, pr.project_name,pr. brief_description,pr.image_url,pr.video_url, pr.target_money, sum(dd.money)::integer as cur_money,count(dd.dnd_id)::integer as num_of_donations,(pr.end_date-DATE(now())) as remaining_term,pt.prt_id,pt.project_type_name
+		select 	pr.prj_id, pr.project_code, pr.project_name,pr.brief_description,pr.description,pr.image_url,pr.video_url, pr.target_money, sum(dd.money)::integer as cur_money,count(dd.dnd_id)::integer as num_of_donations,(pr.end_date-DATE(now())) as remaining_term,pt.prt_id,pt.project_type_name
 		from project pr, donate_activity da, donate_details dd, project_type pt
 		where pr.prj_id=da.prj_id and da.dna_id=dd.dna_id and pr.prt_id=pt.prt_id and pr.prj_id = _id
 		group by pr.prj_id,pt.prt_id,pt.project_type_name;
-end;$$
-
-select * from get_project_dto_by_id(1)
-
+end;
+$BODY$;
 
 
 

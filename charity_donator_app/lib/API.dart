@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
-const baseUrl = "http://192.168.100.19:8080/api";
+const baseUrl = "http://192.168.100.25:8080/api";
 const login = "/login";
 const register = "/register";
 const projects = "/projects";

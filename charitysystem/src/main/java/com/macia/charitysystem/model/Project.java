@@ -61,6 +61,7 @@ import java.util.List;
                                 @ColumnResult(name="project_code",type = String.class),
                                 @ColumnResult(name="project_name",type = String.class),
                                 @ColumnResult(name="brief_description",type = String.class),
+                                @ColumnResult(name="description",type = String.class),
                                 @ColumnResult(name="image_url",type = String.class),
                                 @ColumnResult(name="video_url",type = String.class),
                                 @ColumnResult(name="target_money",type = Integer.class),
