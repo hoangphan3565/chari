@@ -11,6 +11,8 @@ import 'package:charity_donator_app/components/rounded_button.dart';
 import 'package:charity_donator_app/components/rounded_input_field.dart';
 import 'package:charity_donator_app/components/rounded_password_field.dart';
 import 'package:charity_donator_app/constants.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -80,7 +82,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
               ),
               RoundedInputField(
                 hintText: "Nhập Số điện thoại",
-                icon: Icons.phone,
+                icon: LineAwesomeIcons.phone,
                 keyboardType: TextInputType.number,
                 controller: _usernameController,
                 onChanged: (value) {},

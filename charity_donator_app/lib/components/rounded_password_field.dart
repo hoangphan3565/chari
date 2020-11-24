@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:charity_donator_app/components/text_field_container.dart';
 import 'package:charity_donator_app/constants.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class RoundedPasswordField extends StatelessWidget {
   final String hintText;
@@ -24,13 +25,13 @@ class RoundedPasswordField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           icon: Icon(
-            Icons.lock,
+            LineAwesomeIcons.lock,
             color: kPrimaryColor,
           ),
-          suffixIcon: Icon(
-            Icons.visibility,
-            color: kPrimaryColor,
-          ),
+          // suffixIcon: Icon(
+          //   Icons.visibility,
+          //   color: kPrimaryColor,
+          // ),
           border: InputBorder.none,
         ),
       ),

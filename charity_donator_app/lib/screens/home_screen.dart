@@ -4,6 +4,8 @@ import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/components/rounded_button.dart';
 import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/models/Project.dart';
+import 'package:charity_donator_app/screens/favorite_screen.dart';
+import 'package:charity_donator_app/screens/login_screen.dart';
 import 'package:charity_donator_app/screens/projectdetails_screen.dart';
 
 
@@ -16,6 +18,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:unicode/unicode.dart' as unicode;
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -25,153 +29,119 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>{
   TextEditingController _searchController = TextEditingController();
+  bool islogin = false;
 
   var projects = new List<Project>();
-  var project = new  List<Project>();
-
-  _getProjects() async{
-    API.getProjects().then((response) {
-      setState(() {
-        List<dynamic> list = json.decode(utf8.decode(response.bodyBytes));
-        projects = list.map((model) => Project.fromJson(model)).toList();
-      });
-    });
-  }
+  List<String> listProjectIdFavorite = new List<String>();
 
   initState() {
-    _getProjects();
     super.initState();
+    _checkLogin();
+    _getProjects();
+    print('Async done!');
   }
 
   dispose() {
     super.dispose();
   }
 
-  testGetDataWithToken() async{
+  _getProjects() async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String token = _prefs.get("jwt");
-    if(token == null){
-      print('chuyển hướng đến trang đăng nhập');
-      return;
+    String temp = _prefs.getString('donator_favorite_project');
+    if(temp!=null){
+      listProjectIdFavorite = temp.split(" ");
     }
-    else{
-      String url = baseUrl+"/projects"+"/test";
-      var jsonResponse;
-      final res = await http.get(url, headers:getHeaderJWT(token));
-      jsonResponse = json.decode(res.body);
-      print("Response status: ${res.statusCode}");
-      print("Response body: ${res.body}");
-    }
-  }
-
-  getProjectDetails(int id) async{
-    API.getProjectDetails(id).then((response) {
+    API.getProjects().then((response) {
       setState(() {
         List<dynamic> list = json.decode(utf8.decode(response.bodyBytes));
-        project = list.map((model) => Project.fromJson(model)).toList();
-        print(project[0].project_name);
+        projects = list.map((model) => Project.fromJson(model)).toList();
       });
+      for (int i = 0;i<projects.length;i++) {
+        API.getImageByProjectID(projects[i].prj_id).then((response) {
+          setState(() {
+            List<String> imglist = (json.decode(response.body) as List<dynamic>).cast<String>();
+            projects[i].imgList = imglist;
+          });
+        });
+      }
     });
   }
 
-  int _selectedItemIndex = 0;
+  _changeStateFavorite(int projectid,bool curstate)async{
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String token = _prefs.get("jwt");
+    int donatorid = _prefs.get("donator_id");
+    if(token == null){
+      Fluttertoast.showToast(
+          msg: "Bạn hãy đăng nhập trước",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+      return;
+    }
+    if(curstate){
+      API.postRemoveProjectFromFavorite(projectid, donatorid, token).then((response) {
+        setState(() {
+          _prefs.setString('donator_favorite_project',json.decode(response.body)['favoriteProject']);
+        });
+      });
+      listProjectIdFavorite.remove(projectid.toString());
+    }else{
+      API.postAddProjectToFavorite(projectid, donatorid, token).then((response) {
+        setState(() {
+          _prefs.setString('donator_favorite_project',json.decode(response.body)['favoriteProject']);
+        });
+      });
+      listProjectIdFavorite.add(projectid.toString());
+
+    }
+  }
+
+  _checkLogin() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var jwt = prefs.getString('jwt');
+    jwt == null ? islogin=false : islogin=true;
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.only(left: 10, right: 10, top: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _searchController,
-              cursorColor: kPrimaryColor,
-              decoration: InputDecoration(
-                icon: Icon(
-                  Icons.search,
-                  color: kPrimaryColor,
-                ),
-                hintText: "Tìm kiếm",
-                border: InputBorder.none,
-              ),
-            ),
-            //Danh sách bài viết
-            Expanded(
-              child:  ListView.builder(
-                itemCount: projects.length,
-                itemBuilder: (context, index) {
-                  return buildPostSection(projects[index].prj_id,projects[index].image_url,projects[index].project_name,projects[index].brief_description,projects[index].num_of_donations,projects[index].remaining_term,projects[index].cur_money,projects[index].target_money);
-                },
-              ),
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.green.withOpacity(0.1),
-                spreadRadius: 1,
-              )
-            ],
-            color: Colors.grey.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(15)),
-        child: Row(
-          children: [
-            buildNavBarItem(Icons.home, 0),
-            buildNavBarItem(Icons.favorite, 1),
-            buildNavBarItem(Icons.notifications, 2),
-            buildNavBarItem(Icons.history, 3),
-            buildNavBarItem(Icons.person, 4),
-          ],
+        child: ListView.builder(
+          itemCount: projects.length,
+          itemBuilder: (context, index) {
+            return buildPostSection(projects[index]);
+          },
         ),
       ),
     );
   }
 
-  Widget buildNavBarItem(IconData icon, int index) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedItemIndex = index;
-        });
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width / 5,
-        height: 45,
-        child: icon != null
-            ? Icon(
-          icon,
-          size: 25,
-          color: index == _selectedItemIndex
-              ? Colors.green[800]
-              : Colors.green[400],
-        )
-            : Container(),
-      ),
-    );
-  }
 
-  Container buildPostSection(int id,String urlPost, String projectName,String briefInformation, int numOfDonations,int remainingTerm,int curMoney,int targetMoney) {
+  Container buildPostSection(Project project) {
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.grey.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildPostPicture(id,urlPost),  //Hình ảnh mặc định của bài viết
+          buildPostPicture(project),
           SizedBox(
             height: 10,
           ),
           //Tên dự án
           Text(
-            projectName,
+            project.project_name,
             style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -182,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen>{
           ),
           //Thông tin vắn tắt
           Text(
-            briefInformation,
+            project.brief_description,
             style: TextStyle(
                 fontSize: 15,
                 color: Colors.black26),
@@ -199,32 +169,30 @@ class _HomeScreenState extends State<HomeScreen>{
           SizedBox(
             height: 5,
           ),
-          buildProgressPercentRow(curMoney,targetMoney),
+          buildProgressPercentRow(project.cur_money,project.target_money),
           SizedBox(
             height: 5,
           ),
-          buildInfoDetailsRow(numOfDonations,remainingTerm),
+          buildInfoDetailsRow(project.num_of_donations,project.remaining_term),
         ],
       ),
     );
   }
 
-  Stack buildPostPicture(int id,String image_url) {
+  Stack buildPostPicture(Project project) {
     return Stack(
       children: [
         InkWell(
           onTap: ()=>{
-            print("test on tap image"),
-            getProjectDetails(id),
             Navigator.push(
             context,
-               MaterialPageRoute(builder: (context) => ProjectDetailsScreen(id: id)),
+               MaterialPageRoute(builder: (context) => ProjectDetailsScreen(project: project,)),
             ),
           },
           child: Container(
             height: MediaQuery.of(context).size.width - 200,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.3),
@@ -235,15 +203,27 @@ class _HomeScreenState extends State<HomeScreen>{
                 ],
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(image_url),
+                  image: NetworkImage(project.image_url),
+
                 )),
           ),
         ),
+
         Positioned(
           bottom: 20,
           right: 20,
-          child: Icon(Icons.favorite, size: 35, color: Colors.white.withOpacity(0.7)),
+          child: InkWell(
+            onTap: ()=> {
+              _changeStateFavorite(project.prj_id,listProjectIdFavorite.contains(project.prj_id.toString())),
+              print("Change state successfully"),
+            },
+            child: listProjectIdFavorite.contains(project.prj_id.toString()) == true ?
+            Icon(Icons.favorite, size: 35, color: Colors.green.withOpacity(0.9))
+                :
+            Icon(Icons.favorite, size: 35, color: Colors.white.withOpacity(0.9)),
+          ),
         )
+
       ],
     );
   }
@@ -303,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen>{
           border: Border.all(width: 1.5, color: Colors.green[600]),
           borderRadius: BorderRadius.circular(10), color: kPrimaryLightColor),
           child:FlatButton(
-            onPressed:()=> {},
+            onPressed:() => {},
             child: Text(
               "Quyên góp",
               style: TextStyle(

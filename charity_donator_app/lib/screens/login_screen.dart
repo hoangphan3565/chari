@@ -16,6 +16,7 @@ import 'package:charity_donator_app/components/rounded_input_field.dart';
 import 'package:charity_donator_app/components/rounded_password_field.dart';
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/API.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -29,9 +30,8 @@ class _LoginScreenState extends State<LoginScreen>{
   bool _isLoading = false;
 
   //Hàm xử lý đăng nhập bằng API
-  Future logIn(String username, String password) async{
+  logIn(String username, String password) async{
     String url = baseUrl+login;
-
     final body = jsonEncode(<String, String>{
       "username":username,
       "password":password
@@ -47,9 +47,23 @@ class _LoginScreenState extends State<LoginScreen>{
         setState(() {
           _isLoading = false;
         });
-        // lưu token vào secure storage
+        // lưu token vào SharedPreferences
         SharedPreferences _prefs = await SharedPreferences.getInstance();
         _prefs.setString('jwt',jsonResponse['token']);
+        _prefs.setString('username',username);
+        _prefs.setString('password',password);
+
+        // Lưu thông tin người dùng đã đăng nhập
+        var jsonResponse2;
+        var res2 = await http.get(baseUrl + donators +"/phone/"+username,headers:getHeaderJWT(_prefs.getString('jwt')));
+        jsonResponse2 = json.decode(res2.body);
+        _prefs.setInt('donator_id',jsonResponse2['dnt_ID']);
+        _prefs.setString('donator_address',jsonResponse2['address']);
+        _prefs.setString('donator_avatar_url',jsonResponse2['avatarUrl']);
+        _prefs.setString('donator_full_name',jsonResponse2['fullName']);
+        _prefs.setString('donator_favorite_project',jsonResponse2['favoriteProject']);
+
+        //Hiện thông báo đăng nhập thành công
         Fluttertoast.showToast(
             msg: "Đăng nhập thành công",
             toastLength: Toast.LENGTH_SHORT,
@@ -62,7 +76,8 @@ class _LoginScreenState extends State<LoginScreen>{
         //Chuyển hướng đến trang chính và xóa tất cả context trước đó
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> HomeScreen()), (Route<dynamic> route) => false);
       }
-    }else{
+    }
+    else{
       Fluttertoast.showToast(
           msg: "Sai SĐT hoặc mật khẩu",
           toastLength: Toast.LENGTH_SHORT,
@@ -79,6 +94,8 @@ class _LoginScreenState extends State<LoginScreen>{
       print("Response body: ${res.body}");
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen>{
                 SizedBox(height: size.height * 0.03),
                 RoundedInputField(
                   hintText: "Nhập Số điện thoại",
-                  icon: Icons.phone,
+                  icon: LineAwesomeIcons.phone,
                   keyboardType: TextInputType.number,
                   controller: _usernameController,
                   onChanged: (value) {},
