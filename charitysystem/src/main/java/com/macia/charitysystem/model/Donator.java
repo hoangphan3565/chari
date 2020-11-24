@@ -28,6 +28,12 @@ public class Donator {
     @Column(length=10)
     private String phoneNumber;
 
+    @Column()
+    private String avatarUrl;
+
+    @Column
+    private String favoriteProject;
+
     @JsonIgnore
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "donator")
     private List<DonateActivity> donateActivities;

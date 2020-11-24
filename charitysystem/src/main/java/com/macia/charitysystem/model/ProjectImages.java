@@ -1,5 +1,7 @@
 package com.macia.charitysystem.model;
 
+import com.macia.charitysystem.DTO.ImageDTO;
+import com.macia.charitysystem.DTO.ProjectDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,19 +15,30 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedQueries({
+        @NamedQuery(name = "named.projectImages.findAll",
+                query = "SELECT NEW com.macia.charitysystem.DTO.ImageDTO(p.imageUrl) FROM ProjectImages p"),
+        @NamedQuery(name = "named.projectImages.findById",
+                query = "SELECT NEW com.macia.charitysystem.DTO.ImageDTO(p.imageUrl) FROM ProjectImages p where p.PRI_ID =:id"),
+        @NamedQuery(name = "named.projectImages.findByProjectId",
+                query = "SELECT NEW com.macia.charitysystem.DTO.ImageDTO(p.imageUrl) FROM ProjectImages p where p.project.PRJ_ID =:id"),
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(
+                name="ImageMapping",
+                classes = @ConstructorResult(targetClass = ImageDTO.class,
+                        columns = {
+                                @ColumnResult(name="imageUrl",type = String.class),
+                        })
+        ),
+})
 public class ProjectImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer PRI_ID;
 
-    @Column(length=200)
-    private String title;
-
     @Column(length=500)
     private String imageUrl;
-
-    @Column
-    private Integer orderNumber;
 
     @ManyToOne
     @JoinColumn(name = "prj_id")

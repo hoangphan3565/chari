@@ -25,18 +25,13 @@ public class ProjectController {
     @Autowired
     private SupportedPeopleService supportedPeopleService;
 
-    @GetMapping("/test")
-    public ResponseEntity<?> getTestBleBle(){
-        JSONObject jo = new JSONObject();
-        jo.put("He he", "hihi");
-        return ResponseEntity.ok(jo.toMap());
-    }
+
+
 
     @GetMapping()
     public ResponseEntity<?> getAllProject(){
         return ResponseEntity.ok().body(projectService.findAllProjectDTO());
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProjectById(@PathVariable(value = "id") Integer id) {
@@ -47,6 +42,9 @@ public class ProjectController {
     public ResponseEntity<?> getProjectByTypeId(@PathVariable(value = "id") Integer id) {
         return ResponseEntity.ok().body(projectService.findAllProjectDTOByType(id));
     }
+
+
+
 
     @PostMapping()
     public Project createProject(@RequestBody Project project) {

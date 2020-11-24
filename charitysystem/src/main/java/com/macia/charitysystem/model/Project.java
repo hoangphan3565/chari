@@ -31,6 +31,7 @@ import java.util.List;
                 resultSetMappings = "ProjectMapping",
                 procedureName = "get_projects_dto"
         ),
+
         @NamedStoredProcedureQuery(
                 name = "named_getProjectDTOListByType",
                 resultSetMappings = "ProjectMapping",
@@ -69,7 +70,7 @@ import java.util.List;
                                 @ColumnResult(name="num_of_donations",type = Integer.class),
                                 @ColumnResult(name="remaining_term",type = Integer.class),
                                 @ColumnResult(name="prt_id",type = Integer.class),
-                                @ColumnResult(name="project_type_name",type = String.class)
+                                @ColumnResult(name="project_type_name",type = String.class),
 
                         })
         ),

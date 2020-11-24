@@ -84,7 +84,7 @@ public class JwtAuthenticationController {
 		if(user.getUsertype().equals(UserType.Donator.toString()))
 		{
 			newuser.setUsertype(UserType.Donator);
-			donatorService.save(Donator.builder().phoneNumber(user.getUsername()).build());
+			donatorService.save(Donator.builder().phoneNumber(user.getUsername()).favoriteProject("").build());
 		}else if(user.getUsertype().equals(UserType.Collaborator.toString())){
 			newuser.setUsertype(UserType.Collaborator);
 			collaboratorService.save(Collaborator.builder().phoneNumber(user.getUsername()).build());

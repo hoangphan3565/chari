@@ -25,14 +25,13 @@ public class ProjectService {
         return projectRepo.saveAndFlush(project);
     }
 
-
-
     @SuppressWarnings("unchecked")
     public List<ProjectDTO> findAllProjectDTO(){
         StoredProcedureQuery query = this.em.createNamedStoredProcedureQuery("named_getProjectDTOList");
         query.execute();
         return query.getResultList();
     }
+
     @SuppressWarnings("unchecked")
     public List<ProjectDTO> findProjectDTOById(Integer id){
         StoredProcedureQuery query = this.em.createNamedStoredProcedureQuery("named_getProjectDTOById");
