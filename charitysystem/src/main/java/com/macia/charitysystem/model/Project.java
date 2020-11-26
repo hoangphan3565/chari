@@ -1,7 +1,6 @@
 package com.macia.charitysystem.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.jayway.jsonpath.internal.function.numeric.Max;
 import com.macia.charitysystem.DTO.ProjectDTO;
 import lombok.*;
 

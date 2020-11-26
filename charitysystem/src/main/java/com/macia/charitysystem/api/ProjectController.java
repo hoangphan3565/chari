@@ -8,7 +8,6 @@ import com.macia.charitysystem.service.ProjectTypeService;
 import com.macia.charitysystem.service.SupportedPeopleService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,10 +45,10 @@ public class ProjectController {
 
 
 
-    @PostMapping()
-    public Project createProject(@RequestBody Project project) {
-        return projectService.save(project);
-    }
+//    @PostMapping()
+//    public Project createProject(@RequestBody Project project) {
+//        return projectService.save(project);
+//    }
 
     @PostMapping("/create/type/{prtid}/peo/{sptid}")
     public ResponseEntity<?> createEmployeeWithDeptAndPostID(

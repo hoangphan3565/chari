@@ -20,6 +20,7 @@ public class DonatorService {
     public Donator save(Donator donator) {
         return donatorRepo.saveAndFlush(donator);
     }
+
     public Donator findById(Integer id){
         return donatorRepo.findById(id).orElseThrow();
     }
