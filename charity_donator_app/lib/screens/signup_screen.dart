@@ -1,17 +1,13 @@
-import 'package:charity_donator_app/Screens/login_screen.dart';
-import 'package:charity_donator_app/components/background.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:charity_donator_app/API.dart';
-import 'package:charity_donator_app/components/already_have_an_account_acheck.dart';
-import 'package:charity_donator_app/components/rounded_button.dart';
-import 'package:charity_donator_app/components/rounded_input_field.dart';
-import 'package:charity_donator_app/components/rounded_password_field.dart';
 import 'package:charity_donator_app/constants.dart';
+import 'package:charity_donator_app/screens/screens.dart';
+import 'package:charity_donator_app/widgets/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class SignUpScreen extends StatefulWidget {

@@ -1,19 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:charity_donator_app/components/text_field_container.dart';
 import 'package:charity_donator_app/constants.dart';
+import 'package:charity_donator_app/widgets/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-class RoundedInputField extends StatelessWidget {
+class RoundedPasswordField extends StatelessWidget {
   final String hintText;
-  final IconData icon;
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
-  final TextInputType keyboardType;
-  const RoundedInputField({
+  const RoundedPasswordField({
     Key key,
     this.hintText,
-    this.keyboardType,
     this.controller,
-    this.icon,
     this.onChanged,
   }) : super(key: key);
 
@@ -21,16 +18,20 @@ class RoundedInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFieldContainer(
       child: TextField(
-        onChanged: onChanged,
+        obscureText: true,
         controller: controller,
-        keyboardType: keyboardType,
+        onChanged: onChanged,
         cursorColor: kPrimaryColor,
         decoration: InputDecoration(
+          hintText: hintText,
           icon: Icon(
-            icon,
+            LineAwesomeIcons.lock,
             color: kPrimaryColor,
           ),
-          hintText: hintText,
+          // suffixIcon: Icon(
+          //   Icons.visibility,
+          //   color: kPrimaryColor,
+          // ),
           border: InputBorder.none,
         ),
       ),

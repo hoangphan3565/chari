@@ -1,25 +1,14 @@
-import 'package:charity_donator_app/components/background.dart';
-import 'package:charity_donator_app/components/rounded_input_field.dart';
-import 'package:charity_donator_app/constants.dart';
-import 'package:charity_donator_app/components/rounded_button.dart';
-import 'package:charity_donator_app/API.dart';
-import 'package:charity_donator_app/models/Project.dart';
-import 'package:charity_donator_app/screens/favorite_screen.dart';
-import 'package:charity_donator_app/screens/login_screen.dart';
-import 'package:charity_donator_app/screens/projectdetails_screen.dart';
-
-
-import 'package:flutter/material.dart';
-import 'dart:async';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:convert' show utf8;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:unicode/unicode.dart' as unicode;
+
+import 'package:charity_donator_app/API.dart';
+import 'package:charity_donator_app/constants.dart';
+import 'package:charity_donator_app/models/models.dart';
+import 'package:charity_donator_app/screens/screens.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -28,9 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen>{
-  TextEditingController _searchController = TextEditingController();
   bool islogin = false;
-
   var projects = new List<Project>();
   List<String> listProjectIdFavorite = new List<String>();
 
@@ -69,29 +56,24 @@ class _HomeScreenState extends State<HomeScreen>{
 
   _changeStateFavorite(int projectid,bool curstate)async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String token = _prefs.get("jwt");
+    String username = _prefs.get("username");
     int donatorid = _prefs.get("donator_id");
-    if(token == null){
-      Fluttertoast.showToast(
-          msg: "Bạn hãy đăng nhập trước",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0
+    if(username == null){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
       );
       return;
     }
     if(curstate){
-      API.postRemoveProjectFromFavorite(projectid, donatorid, token).then((response) {
+      API.postRemoveProjectFromFavorite(projectid, donatorid).then((response) {
         setState(() {
           _prefs.setString('donator_favorite_project',json.decode(response.body)['favoriteProject']);
         });
       });
       listProjectIdFavorite.remove(projectid.toString());
     }else{
-      API.postAddProjectToFavorite(projectid, donatorid, token).then((response) {
+      API.postAddProjectToFavorite(projectid, donatorid).then((response) {
         setState(() {
           _prefs.setString('donator_favorite_project',json.decode(response.body)['favoriteProject']);
         });
@@ -104,21 +86,39 @@ class _HomeScreenState extends State<HomeScreen>{
   _checkLogin() async {
     WidgetsFlutterBinding.ensureInitialized();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var jwt = prefs.getString('jwt');
-    jwt == null ? islogin=false : islogin=true;
+    var username = prefs.getString('username');
+    username == null ? islogin=false : islogin=true;
   }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: ListView.builder(
-          itemCount: projects.length,
-          itemBuilder: (context, index) {
-            return buildPostSection(projects[index]);
-          },
-        ),
+      body: CustomScrollView(
+        slivers: [
+          // SliverAppBar(
+          //   brightness: Brightness.light,
+          //   backgroundColor: Colors.white,
+          //   title: Text(
+          //     'Trang chính',
+          //     style: const TextStyle(
+          //       color: kPrimaryColor,
+          //       fontSize: 18.0,
+          //       letterSpacing: -1.2,
+          //     ),
+          //   ),
+          //   centerTitle: false,
+          //   floating: true,
+          // ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                return buildPostSection(projects[index]);
+              },
+              childCount: projects.length,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,22 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:async';
-import 'package:charity_donator_app/Screens/home_screen.dart';
-import 'package:charity_donator_app/Screens/signup_screen.dart';
-import 'package:charity_donator_app/components/background.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:http/http.dart' as http;
 
-import 'package:charity_donator_app/components/already_have_an_account_acheck.dart';
-import 'package:charity_donator_app/components/rounded_button.dart';
-import 'package:charity_donator_app/components/rounded_input_field.dart';
-import 'package:charity_donator_app/components/rounded_password_field.dart';
-import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/API.dart';
+import 'package:charity_donator_app/constants.dart';
+import 'package:charity_donator_app/screens/screens.dart';
+import 'package:charity_donator_app/widgets/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -41,21 +33,18 @@ class _LoginScreenState extends State<LoginScreen>{
     //Kiem tra API Status
     if(res.statusCode == 200){
       jsonResponse = json.decode(res.body);
-      print("Response status: ${res.statusCode}");
-      print("Response body: ${res.body}");
       if(jsonResponse != null){
         setState(() {
           _isLoading = false;
         });
         // lưu token vào SharedPreferences
         SharedPreferences _prefs = await SharedPreferences.getInstance();
-        _prefs.setString('jwt',jsonResponse['token']);
-        _prefs.setString('username',username);
-        _prefs.setString('password',password);
+        _prefs.setString('username',jsonResponse['data']['username']);
+        _prefs.setString('password',jsonResponse['data']['password']);
 
         // Lưu thông tin người dùng đã đăng nhập
         var jsonResponse2;
-        var res2 = await http.get(baseUrl + donators +"/phone/"+username,headers:getHeaderJWT(_prefs.getString('jwt')));
+        var res2 = await http.get(baseUrl + donators +"/phone/"+username,headers:header);
         jsonResponse2 = json.decode(res2.body);
         _prefs.setInt('donator_id',jsonResponse2['dnt_ID']);
         _prefs.setString('donator_address',jsonResponse2['address']);
@@ -74,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen>{
             fontSize: 16.0
         );
         //Chuyển hướng đến trang chính và xóa tất cả context trước đó
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> HomeScreen()), (Route<dynamic> route) => false);
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> MainScreen()), (Route<dynamic> route) => false);
       }
     }
     else{

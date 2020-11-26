@@ -1,25 +1,11 @@
-import 'package:charity_donator_app/constants.dart';
-import 'package:flutter/material.dart';
-import 'package:charity_donator_app/components/background.dart';
-import 'package:charity_donator_app/components/rounded_input_field.dart';
-import 'package:charity_donator_app/constants.dart';
-import 'package:charity_donator_app/components/rounded_button.dart';
-import 'package:charity_donator_app/API.dart';
-import 'package:charity_donator_app/models/Project.dart';
-
-
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:convert' show utf8;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:unicode/unicode.dart' as unicode;
-import 'package:chewie/chewie.dart';
-import 'package:video_player/video_player.dart';
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:charity_donator_app/models/project_model.dart';
+import 'package:chewie/chewie.dart';
+import 'package:flutter/material.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:video_player/video_player.dart';
 
 
 

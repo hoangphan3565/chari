@@ -1,16 +1,18 @@
+import 'package:charity_donator_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:charity_donator_app/constants.dart';
 
 class ProfileListItem extends StatelessWidget {
   final IconData icon;
   final String text;
   final bool hasNavigation;
+  final Function press;
 
   const ProfileListItem({
     Key key,
     this.icon,
     this.text,
+    this.press,
     this.hasNavigation = true,
   }) : super(key: key);
 
@@ -37,10 +39,14 @@ class ProfileListItem extends StatelessWidget {
             size: kSpacingUnit.toDouble() * 2.5,
           ),
           SizedBox(width: kSpacingUnit.toDouble() * 1.5),
-          Text(
-            this.text,
-            style: TextStyle(
-              fontSize: 15,
+          FlatButton(
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+            onPressed: press,
+            child: Text(
+              this.text,
+              style: TextStyle(
+                fontSize: 15,
+              ),
             ),
           ),
           Spacer(),
