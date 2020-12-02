@@ -35,10 +35,10 @@ public class Donator {
     private String favoriteProject;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "donator")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "donator")
     private List<DonateActivity> donateActivities;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "donator")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "donator")
     private List<Transactions> transactions;
 }

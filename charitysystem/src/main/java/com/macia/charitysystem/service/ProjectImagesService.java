@@ -8,10 +8,7 @@ import com.macia.charitysystem.repository.ProjectImagesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.StoredProcedureQuery;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
 
 @Service
@@ -28,9 +25,13 @@ public class ProjectImagesService {
     }
 
     public ImageDTO findProjectImagesById(Integer id){
-        TypedQuery<ImageDTO> query =  em.createNamedQuery("named.projectImages.findById", ImageDTO.class);
-        query.setParameter("id", id);
-        return query.getSingleResult();
+        try{
+            TypedQuery<ImageDTO> query =  em.createNamedQuery("named.projectImages.findById", ImageDTO.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } catch(NoResultException e) {
+            return null;
+        }
     }
 
     public List<ImageDTO> findProjectImagesByProjectId(Integer id){

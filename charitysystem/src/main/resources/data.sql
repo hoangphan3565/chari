@@ -7,16 +7,15 @@ insert into app_user(username,password,usertype) values('789','123','Donator');
 insert into collaborator(full_name,phone_number,address,certificate) values('Nguyễn Minh Anh','1234','TP Hà Nội','url of certificate');
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Trần Văn Mạnh','123','Quận 1, TP Hà Nội','1 2 10 11 ','https://webbachthang.com/wp-content/uploads/2017/12/avatar-la-gi-01.jpg');
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Trần Văn Thường','456','Quận 2, TP HCM','1 3','https://i.pinimg.com/originals/01/48/0f/01480f29ce376005edcbec0b30cf367d.jpg');
---vanquan@donator.chari.com / card number:
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Trần Văn Quân','789','Quận 3, TP HCM','4 6','https://i.pinimg.com/originals/01/48/0f/01480f29ce376005edcbec0b30cf367d.jpg');
 
 
 insert into project_type(project_type_code,project_type_name) values('G2','Gói hỗ trợ dữ án cộng đồng kinh phí thấp');
 
 
-insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Yên','Bình Dương','0723433433','972731252211');
-insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Thoái','Quảng Bình','0242122331','231231532123');
-insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Nhược','Long An','092312322','454343231233');
+insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Yên','Bình Dương','4089566413','41347242264');
+insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Thoái','Quảng Bình','4083743757','3324454755762');
+insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Nhược','Long An','4088473876','479619785662983');
 
 
 insert into project(project_code,project_name,brief_description,description,start_date,end_date,target_money,image_url,video_url,prt_id,stp_id,clb_id) values('G10001','Xây cầu tình thương cho làng An Phú 1','Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày,Làng An Phú 1 có nhiều sông gòi cần xây cầu cho học sinh đi học hằng ngày','2020-10-01','2020-11-30',20000000,'https://songda6.com.vn/editor/elfinder/files/Hinh%20anh%20DTN/DSC01330.JPG','https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',1,1,1);

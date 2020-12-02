@@ -70,6 +70,7 @@ import java.util.List;
                                 @ColumnResult(name="remaining_term",type = Integer.class),
                                 @ColumnResult(name="prt_id",type = Integer.class),
                                 @ColumnResult(name="project_type_name",type = String.class),
+                                @ColumnResult(name="status",type = String.class),
 
                         })
         ),
@@ -122,10 +123,10 @@ public class Project {
     private Collaborator collaborator;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "project")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "project")
     private List<ProjectImages> projectImages;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "project")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "project")
     private List<DonateActivity> donateActivities;
 }

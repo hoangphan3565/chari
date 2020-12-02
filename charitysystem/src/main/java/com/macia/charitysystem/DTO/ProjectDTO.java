@@ -20,4 +20,5 @@ public class ProjectDTO {
     private Integer remaining_term;
     private Integer prt_id;
     private String project_type_name;
+    private String status;
 }

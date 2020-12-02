@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -23,8 +24,12 @@ public class ProjectTypeService {
     }
 
     public ProjectType findById(Integer id){
-        TypedQuery<ProjectType> query =  em.createNamedQuery("named.projecttype.findById", ProjectType.class);
-        query.setParameter("id", id);
-        return query.getSingleResult();
+        try{
+            TypedQuery<ProjectType> query =  em.createNamedQuery("named.projecttype.findById", ProjectType.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } catch(NoResultException e) {
+            return null;
+        }
     }
 }

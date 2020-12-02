@@ -15,6 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedQueries({
+        @NamedQuery(name = "named.donate_activity.findAll",
+                query = "SELECT da FROM DonateActivity da"),
+        @NamedQuery(name = "named.donate_activity.findById",
+                query = "SELECT da FROM DonateActivity da where da.DNA_ID =:id"),
+        @NamedQuery(name = "named.donate_activity.findByDonatorIdAndProjectId",
+                query = "SELECT da FROM DonateActivity da where da.donator.DNT_ID =:did and da.project.PRJ_ID =:pid"),
+})
 public class DonateActivity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +37,6 @@ public class DonateActivity {
     private Project project;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "donateActivity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "donateActivity")
     private List<DonateDetails> donateDetails;
 }

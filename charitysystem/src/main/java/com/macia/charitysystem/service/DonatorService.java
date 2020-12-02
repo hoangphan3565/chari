@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Service
 public class DonatorService {
@@ -17,8 +17,8 @@ public class DonatorService {
     @Autowired
     private DonatorRepository donatorRepo;
 
-    public Donator save(Donator donator) {
-        return donatorRepo.saveAndFlush(donator);
+    public void save(Donator donator) {
+        donatorRepo.saveAndFlush(donator);
     }
 
     public Donator findById(Integer id){
@@ -26,7 +26,11 @@ public class DonatorService {
     }
 
     public Donator findByPhone(String phone){
-        return donatorRepo.findByPhoneNumber(phone);
+        try{
+            return donatorRepo.findByPhoneNumber(phone);
+        } catch(NoResultException e) {
+            return null;
+        }
     }
 
     public void addProjectToFavoriteList(Integer projectId,Integer donatorid){

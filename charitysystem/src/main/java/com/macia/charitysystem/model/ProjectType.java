@@ -33,6 +33,6 @@ public class ProjectType {
     private String ProjectTypeName;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "projectType")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "projectType")
     private List<Project> projects;
 }

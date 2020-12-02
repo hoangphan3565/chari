@@ -7,10 +7,7 @@ import com.macia.charitysystem.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.StoredProcedureQuery;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
 
 @Service
@@ -55,9 +52,13 @@ public class ProjectService {
     }
 
     public Project findProjectById(Integer id){
-        TypedQuery<Project> query =  em.createNamedQuery("named.project.findById", Project.class);
-        query.setParameter("id", id);
-        return query.getSingleResult();
+        try{
+            TypedQuery<Project> query =  em.createNamedQuery("named.project.findById", Project.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } catch(NoResultException e) {
+            return null;
+        }
     }
 
     public List<Project> findProjectByTypeId(Integer id){

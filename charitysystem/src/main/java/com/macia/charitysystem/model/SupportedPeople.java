@@ -38,6 +38,6 @@ public class SupportedPeople {
     private String bankAccount;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "supportedPeople")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "supportedPeople")
     private List<Project> projects;
 }
