@@ -23,19 +23,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^0.5.12+4 #
-  http: ^0.12.1 #
-  fluttertoast: ^7.1.1 #
-  jwt_decoder: ^1.0.3 #
-  percent_indicator: ^2.1.8 #
-  unicode: ^0.2.4 #
-  chewie: ^0.12.0 #
-  video_player: ^1.0.0 #
-  carousel_slider: ^2.3.1 #
-  line_awesome_flutter: ^1.0.1
-  font_awesome_flutter: ^8.10.0
-  cached_network_image: ^2.2.0+1
-  material_design_icons_flutter: ^4.0.5345
+  shared_preferences: ^0.5.12+4 #All
+  http: ^0.12.1 #All
+  fluttertoast: ^7.1.1 #All
+  percent_indicator: ^2.1.8 #All
+  unicode: ^0.2.4 #All
+  chewie: ^0.12.0 #All 
+  video_player: ^1.0.0 #All
+  carousel_slider: ^2.3.1 #All
+  line_awesome_flutter: ^1.0.1 #All
+  font_awesome_flutter: ^8.10.0 #All
+  material_design_icons_flutter: ^4.0.5345 #All
+  flutter_money_formatter: 0.8.3 #iOS, Android
+  webview_flutter: ^1.0.7 #iOS, Android
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0

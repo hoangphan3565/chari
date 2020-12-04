@@ -32,22 +32,33 @@ class _LoginScreenState extends State<LoginScreen>{
     var res = await http.post(url,headers:header,body: body);
     //Kiem tra API Status
     if(res.statusCode == 200){
-      jsonResponse = json.decode(res.body);
+      jsonResponse = json.decode(utf8.decode(res.bodyBytes));
       if(jsonResponse != null){
-        setState(() {
-          _isLoading = false;
-        });
+        if(jsonResponse['data']['usertype']!='Donator'){
+          Fluttertoast.showToast(
+              msg: "Ứng dụng này chỉ dành cho nhà từ thiện",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+          return;
+        }
         // lưu token vào SharedPreferences
         SharedPreferences _prefs = await SharedPreferences.getInstance();
         _prefs.setString('username',jsonResponse['data']['username']);
         _prefs.setString('password',jsonResponse['data']['password']);
 
-        // Lưu thông tin người dùng đã đăng nhập
+        // Lưu thông tin người dùng đã đăng nhập... Vì lúc tạo người dùng mới, app đang dùng là app của donator, phía server sẽ lưu đồng thời cả app user và thông tin của donator,
+        // lúc đăng ký lần đầu thì thông tin của donator chỉ có mỗi số điện thoại
         var jsonResponse2;
         var res2 = await http.get(baseUrl + donators +"/phone/"+username,headers:header);
-        jsonResponse2 = json.decode(res2.body);
+        jsonResponse2 = json.decode(utf8.decode(res2.bodyBytes));
         _prefs.setInt('donator_id',jsonResponse2['dnt_ID']);
         _prefs.setString('donator_address',jsonResponse2['address']);
+        _prefs.setString('donator_phone',jsonResponse2['phoneNumber']);
         _prefs.setString('donator_avatar_url',jsonResponse2['avatarUrl']);
         _prefs.setString('donator_full_name',jsonResponse2['fullName']);
         _prefs.setString('donator_favorite_project',jsonResponse2['favoriteProject']);

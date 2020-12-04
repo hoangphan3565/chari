@@ -16,10 +16,14 @@ class PersonalScreen extends StatefulWidget {
 class _PersonalScreenState extends State<PersonalScreen> {
   bool islogin = false;
   String fullname;
+  int donator_id;
+  String address;
+  String avatar_url;
+  String phone;
+
   initState() {
     super.initState();
     _checkLogin();
-    print(fullname);
   }
 
   dispose() {
@@ -35,6 +39,10 @@ class _PersonalScreenState extends State<PersonalScreen> {
       }else{
         islogin=true;
         fullname = prefs.getString('donator_full_name');
+        donator_id = prefs.getInt('donator_id');
+        address = prefs.getString('donator_address');
+        phone = prefs.getString('donator_phone');
+        avatar_url = prefs.getString('donator_avatar_url');
       }
     });
   }
@@ -83,7 +91,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                     children: <Widget>[
                       CircleAvatar(
                         radius: kSpacingUnit.toDouble() * 15,
-                        backgroundImage: NetworkImage('https://webbachthang.com/wp-content/uploads/2017/12/avatar-la-gi-01.jpg'),
+                        backgroundImage: NetworkImage(avatar_url),
                       ),
                       Align(
                         alignment: Alignment.bottomRight,
@@ -109,12 +117,12 @@ class _PersonalScreenState extends State<PersonalScreen> {
                 ),
                 SizedBox(height: kSpacingUnit.toDouble() * 2),
                 Text(
-                  'Tên gì gì đó',
+                  fullname,
                   style: kTitleTextStyle,
                 ),
                 SizedBox(height: kSpacingUnit.toDouble() * 0.5),
                 Text(
-                  'Số điện thoại nè',
+                  phone,
                   style: kCaptionTextStyle,
                 ),
                 SizedBox(height: kSpacingUnit.toDouble() * 5),

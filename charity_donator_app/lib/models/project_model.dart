@@ -12,9 +12,10 @@ class Project {
   int remaining_term;
   int prt_id;
   String project_type_name;
+  String status;
   List<String> imgList;
 
-  Project(int prj_id, String project_name, String brief_description,String description,String image_url,String video_url,int cur_money,int target_money,int num_of_donations,int remaining_term,int prt_id, String project_type_name, List<String> imgList) {
+  Project(int prj_id, String project_name, String brief_description,String description,String image_url,String video_url,int cur_money,int target_money,int num_of_donations,int remaining_term,int prt_id, String project_type_name, String status, List<String> imgList) {
     this.prj_id = prj_id;
     this.project_name = project_name;
     this.brief_description = brief_description;
@@ -27,6 +28,7 @@ class Project {
     this.remaining_term = remaining_term;
     this.prt_id = prj_id;
     this.project_type_name=project_type_name;
+    this.status=status;
     this.imgList = imgList;
   }
 
@@ -42,6 +44,7 @@ class Project {
         num_of_donations = json['num_of_donations'],
         remaining_term = json['remaining_term'],
         prt_id = json['prt_id'],
+        status = json['status'],
         project_type_name=json['project_type_name'];
 
   Map toJson() {
@@ -57,6 +60,7 @@ class Project {
       'num_of_donations':num_of_donations,
       'remaining_term':remaining_term,
       'prt_id':prt_id,
+      'status':status,
       'project_type_name':project_type_name};
   }
 }

@@ -1,17 +1,30 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:charity_donator_app/API.dart';
+import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/models/project_model.dart';
+import 'package:charity_donator_app/screens/screens.dart';
+import 'package:charity_donator_app/utility/utility.dart';
+import 'package:charity_donator_app/widgets/custom_alert_dialog.dart';
+import 'package:charity_donator_app/widgets/widgets.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
+import 'package:http/http.dart' as http;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 
 
 class ProjectDetailsScreen extends StatefulWidget {
   final Project project;
-  ProjectDetailsScreen({@required this.project});
+  final bool quickDonate;
+  ProjectDetailsScreen({@required this.project,this.quickDonate});
   @override
   _ProjectDetailsScreenState createState() => _ProjectDetailsScreenState();
 }
@@ -19,8 +32,13 @@ class ProjectDetailsScreen extends StatefulWidget {
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   VideoPlayerController _videoPlayerController;
   ChewieController _chewieController;
+  TextEditingController _moneyControllerField = TextEditingController();
+  TextEditingController _messageControllerField = TextEditingController();
 
   List<String> listProjectIdFavorite = new List<String>();
+
+  String donate_money="";
+
 
   @override
   void initState() {
@@ -28,35 +46,139 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     this.initializePlayer(widget.project.video_url);
   }
 
-
   Future<void> initializePlayer(String video_url) async {
     _videoPlayerController = VideoPlayerController.network(video_url);
     await _videoPlayerController.initialize();
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      looping: true,
-      // Try playing around with some of these other options:
-
-      // showControls: false,
-      // materialProgressColors: ChewieProgressColors(
-      //   playedColor: Colors.red,
-      //   handleColor: Colors.blue,
-      //   backgroundColor: Colors.grey,
-      //   bufferedColor: Colors.lightGreen,
-      // ),
-      // placeholder: Container(
-      //   color: Colors.grey,
-      // ),
-      // autoInitialize: true,
+      autoPlay: false,
+      looping: false,
+      showControls: true,
+      materialProgressColors: ChewieProgressColors(
+        playedColor: Colors.red,
+        handleColor: Colors.blue,
+        backgroundColor: Colors.grey,
+        bufferedColor: Colors.lightGreen,
+      ),
+      placeholder: Container(
+        color: Colors.grey,
+      ),
+      autoInitialize: true,
     );
     setState(() {});
   }
 
-  int _selectedItem0 = 0;
-  
+  showAlertDialog(BuildContext context,Project project) {
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomAlertDialog(
+          content: Container(
+            width: MediaQuery.of(context).size.width / 1,
+            height: MediaQuery.of(context).size.height / 2.2,
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Text(project.project_name,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 1.5,
+                    color: Colors.grey[300],
+                    margin: EdgeInsets.symmetric(horizontal: 0),
+                  ),
+                  SizedBox(height: 10),
+                  Text("Phương thức thanh toán"),
+                  IconButton(
+                    icon: FaIcon(FontAwesomeIcons.paypal), onPressed: () {  },
+                    color: Colors.blueAccent,
+                    iconSize: 40,
+                  ),
+                  // RoundedInputField(
+                 //    hintText: "Nhập số tiền",
+                 //    icon: Icons.monetization_on_outlined,
+                 //    controller: _moneyControllerField,
+                 //  ),
+                 //  SizedBox(height: 10),
+                 //  RoundedInputField(
+                 //    hintText: "Nhập lời nhắn",
+                 //    icon: Icons.messenger_outline,
+                 //    controller: _messageControllerField,
+                 //  ),
+
+                  TextField(
+                    controller: _moneyControllerField,
+                    keyboardType: TextInputType.number,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    onChanged: (value) {
+                        print(value);
+                        this.donate_money=value;
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Số tiền: ${MoneyUtility.numberToString(this.donate_money)}",
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: _messageControllerField,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Lời nhắn",
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  RoundedButton(
+                    text: "Ủng hộ",
+                    press: ()async{
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      int did = prefs.getInt('donator_id');
+                      if(did==null){did = -1;}
+                      String url = baseUrl+"/paypal/donatorid/${did}/projectid/${project.prj_id}/donate";
+                      final body = jsonEncode(<String, String>{
+                        "price": _moneyControllerField.text,
+                        "description":_messageControllerField.text
+                      });
+                      var res = await http.post(url,headers:header,body: body);
+                      Navigator.push(
+                          context, MaterialPageRoute(
+                          builder: (context)=>DonateScreen(res.body.toString())
+                      )
+                      );
+                    },
+                  ),
+               ],
+              ),
+            ),
+          ),
+        );
+      });
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     return Scaffold(
       body: Column(
         children: [
@@ -71,7 +193,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       Navigator.of(context).pop();
                     },
                     child: Icon(Icons.arrow_back)),
-                Icon(Icons.more_vert),
+                Text(
+                  'Thông tin chi tiết',
+                  style: const TextStyle(
+                    color: kPrimaryColor,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -1.2,
+                  ),
+                ),
+                GestureDetector(
+                    onTap: () {},
+                    child: Icon(Icons.more_vert),),
               ],
             ),
           ),
@@ -104,15 +237,32 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         decoration: BoxDecoration(
             border: Border.all(width: 1.5, color: Colors.green[600]),
             borderRadius: BorderRadius.circular(8), color: Colors.green[600]),
-        child:FlatButton(
-          onPressed:()=> {print(widget.project.imgList)},
+        child:((widget.project.status=='activating')?
+          FlatButton(
+            onPressed:()=> {
+            showAlertDialog(context,widget.project)
+          },
+            child: Text(
+              "Quyên góp ngay",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+          )
+            :
+        FlatButton(
+          onPressed:()=> {
+            Navigator.of(context).pop()
+          },
           child: Text(
-            "Quyên góp ngay",
+            "Quay lại",
             style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.white),
           ),
+        )
         ),
       ),
       bottomNavigationBar: Container(
@@ -127,36 +277,21 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             borderRadius: BorderRadius.circular(5)),
         child: Row(
           children: [
-            buildNavBarItem(null, -1),
+            buildNavBarItem(),
           ],
         ),
       ),
     );
   }
 
-  Widget buildNavBarItem(IconData icon, int index) {
+  Widget buildNavBarItem() {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedItem0 = 0;
-        });
-      },
       child: Container(
         width: MediaQuery.of(context).size.width / 5,
         height: 30,
-        child: icon != null
-            ? Icon(
-          icon,
-          size: 25,
-          color: 0 == _selectedItem0
-              ? Colors.green[800]
-              : Colors.green[400],
-        )
-            : Container(),
       ),
     );
   }
-
 
   Container buildPostVideo() {
     return Container(
@@ -224,9 +359,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildProgressPercentRow(project.cur_money,project.target_money),
+          buildProgressPercentRow(project),
           SizedBox(height: 10),
-          buildInfoDetailsRow(project.num_of_donations,project.remaining_term,project.cur_money,project.target_money),
+          buildInfoDetailsRow(project),
           SizedBox(height: 20),
           Container(
             height: 1,
@@ -310,7 +445,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
-  Row buildInfoDetailsRow(int numOfDonations,int remainingTerm,int curMoney,int targetMoney) {
+  Row buildInfoDetailsRow(Project project) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -326,7 +461,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   ),
                 ),
                 Text(
-                  numOfDonations.toString(),
+                  project.num_of_donations.toString(),
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -347,7 +482,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   ),
                 ),
                 Text(
-                  (curMoney/targetMoney*100).round().toString()+" %",
+                  (project.cur_money/project.target_money*100).round().toString()+" %",
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -358,9 +493,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             SizedBox(
               width: 40,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            if (project.status == 'activating')
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 Text(
                   "Thời hạn còn",
                   style: TextStyle(
@@ -368,43 +504,91 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   ),
                 ),
                 Text(
-                  remainingTerm.toString()+" Ngày",
+                  project.remaining_term.toString()+" Ngày",
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
-                ),
-              ],
-            )
+                  ),
+               ],
+              ),
+            if (project.status == 'reached')
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Đã đạt mục tiêu",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.green[600],
+                    ),
+                  ),
+                ],
+              ),
+            if (project.status == 'overdue')
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Đã hết thời hạn",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
+              )
           ],
         ),
       ],
     );
   }
 
-  Row buildProgressPercentRow(int curMoney,int targetMoney) {
+  Row buildProgressPercentRow(Project project) {
     return Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Đã quyên góp được "+curMoney.toString()+" đ / "+targetMoney.toString()+" đ",
-                style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              LinearPercentIndicator(
-                width: MediaQuery.of(context).size.width-35,
-                lineHeight: 8.0,
-                percent: curMoney/targetMoney,
-                progressColor: Colors.green[600],
-              ),
-            ],
-          )
+          if (project.status != 'overdue')
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Đã quyên góp được "+project.cur_money.toString()+" đ / "+project.target_money.toString()+" đ",
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                LinearPercentIndicator(
+                  width: MediaQuery.of(context).size.width-60,
+                  lineHeight: 8.0,
+                  percent: project.cur_money/project.target_money,
+                  progressColor: Colors.green[600],
+                ),
+              ],
+            ),
+          if (project.status == 'overdue')
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Đã quyên góp được "+project.cur_money.toString()+" đ / "+project.target_money.toString()+" đ",
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                LinearPercentIndicator(
+                  width: MediaQuery.of(context).size.width-60,
+                  lineHeight: 8.0,
+                  percent: project.cur_money/project.target_money,
+                  progressColor: Colors.grey,
+                ),
+              ],
+            )
         ]);
   }
 }
