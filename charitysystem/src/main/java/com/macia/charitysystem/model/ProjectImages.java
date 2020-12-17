@@ -1,7 +1,6 @@
 package com.macia.charitysystem.model;
 
 import com.macia.charitysystem.DTO.ImageDTO;
-import com.macia.charitysystem.DTO.ProjectDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,10 +24,10 @@ import javax.persistence.*;
 })
 @SqlResultSetMappings({
         @SqlResultSetMapping(
-                name="ImageMapping",
+                name = "ImageMapping",
                 classes = @ConstructorResult(targetClass = ImageDTO.class,
                         columns = {
-                                @ColumnResult(name="imageUrl",type = String.class),
+                                @ColumnResult(name = "imageUrl", type = String.class),
                         })
         ),
 })
@@ -37,7 +36,7 @@ public class ProjectImages {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer PRI_ID;
 
-    @Column(length=500)
+    @Column(length = 500)
     private String imageUrl;
 
     @ManyToOne

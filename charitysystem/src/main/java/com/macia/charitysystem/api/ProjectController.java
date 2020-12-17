@@ -6,7 +6,6 @@ import com.macia.charitysystem.model.SupportedPeople;
 import com.macia.charitysystem.service.ProjectService;
 import com.macia.charitysystem.service.ProjectTypeService;
 import com.macia.charitysystem.service.SupportedPeopleService;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,30 +24,18 @@ public class ProjectController {
     private SupportedPeopleService supportedPeopleService;
 
 
-
-
     @GetMapping()
-    public ResponseEntity<?> getAllProject(){
+    public ResponseEntity<?> getAllProject() {
+        System.out.println("Vừa có 1 req lấy danh sách tất cả bài viết");
         return ResponseEntity.ok().body(projectService.findAllProjectDTO());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProjectById(@PathVariable(value = "id") Integer id) {
-        return ResponseEntity.ok().body(projectService.findProjectDTOById(id));
-    }
 
     @GetMapping("/type/{id}")
     public ResponseEntity<?> getProjectByTypeId(@PathVariable(value = "id") Integer id) {
         return ResponseEntity.ok().body(projectService.findAllProjectDTOByType(id));
     }
 
-
-
-
-//    @PostMapping()
-//    public Project createProject(@RequestBody Project project) {
-//        return projectService.save(project);
-//    }
 
     @PostMapping("/create/type/{prtid}/peo/{sptid}")
     public ResponseEntity<?> createEmployeeWithDeptAndPostID(

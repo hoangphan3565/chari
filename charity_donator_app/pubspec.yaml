@@ -36,6 +36,9 @@ dependencies:
   material_design_icons_flutter: ^4.0.5345 #All
   flutter_money_formatter: 0.8.3 #iOS, Android
   webview_flutter: ^1.0.7 #iOS, Android
+  pull_to_refresh: ^1.6.3 #All
+  curved_navigation_bar: ^0.3.4 #All
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

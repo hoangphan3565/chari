@@ -18,8 +18,8 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "named.donate_activity.findAll",
                 query = "SELECT da FROM DonateActivity da"),
-        @NamedQuery(name = "named.donate_activity.findById",
-                query = "SELECT da FROM DonateActivity da where da.DNA_ID =:id"),
+        @NamedQuery(name = "named.donate_activity.findByDonatorId",
+                query = "SELECT da FROM DonateActivity da where da.donator.DNT_ID =:dntid"),
         @NamedQuery(name = "named.donate_activity.findByDonatorIdAndProjectId",
                 query = "SELECT da FROM DonateActivity da where da.donator.DNT_ID =:did and da.project.PRJ_ID =:pid"),
 })
@@ -37,6 +37,6 @@ public class DonateActivity {
     private Project project;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "donateActivity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "donateActivity")
     private List<DonateDetails> donateDetails;
 }

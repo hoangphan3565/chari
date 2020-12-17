@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/screens/screens.dart';
+import 'package:charity_donator_app/utility/utility.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,12 +22,37 @@ class _SignUpScreenState extends State<SignUpScreen>{
   TextEditingController _password1Controller = TextEditingController();
   TextEditingController _password2Controller = TextEditingController();
 
-  bool _isLoading = false;
+  _validateAndLogin(String username, String password1,String password2){
+    if(username.length!=10){
+      Fluttertoast.showToast(
+          msg: 'Số điện thoại không chính xác',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+      return;
+    }
+    if(password1.length < 6 || !Validate.validatePassword(password1)){
+      Fluttertoast.showToast(
+          msg: 'Mật khẩu phải có ít nhất 6 ký tự, chứa ký tự in hoa, số và ký tự đặc biệt!',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+      return;
+    }
+    _singUp(username, password1, password2);
+  }
 
   //Hàm xử lý đăng ký bằng API
-  singUp(String username, String password1,String password2) async{
+  _singUp(String username, String password1,String password2) async{
     String url = baseUrl+register;
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final body = jsonEncode(<String, String>{
       "username":username,
       "password1":password1,
@@ -34,23 +61,20 @@ class _SignUpScreenState extends State<SignUpScreen>{
     });
     var jsonResponse;
     var res = await http.post(url,headers:header,body: body);
+    jsonResponse = json.decode(utf8.decode(res.bodyBytes));
+    //Hiện thông báo theo messenge được trả về từ server
+    Fluttertoast.showToast(
+        msg: jsonResponse['messenger'],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
     //Kiem tra API Status
     if(res.statusCode == 200){
-      jsonResponse = json.decode(res.body);
-      print("Response status: ${res.statusCode}");
-      print("Response body: ${res.body}");
-      if(jsonResponse != null){
-        setState(() {
-          _isLoading = false;
-        });
-        //Chuyển hướng đến trang chính và xóa tất cả context trước đó
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> LoginScreen()), (Route<dynamic> route) => false);
-      }
-    }else{
-      setState(() {
-        _isLoading = false;
-      });
-      print("Response body: ${res.body}");
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> LoginScreen()), (Route<dynamic> route) => false);
     }
   }
 
@@ -85,28 +109,29 @@ class _SignUpScreenState extends State<SignUpScreen>{
               ),
               RoundedPasswordField(
                 hintText: "Nhập mật khẩu",
+                icon: LineAwesomeIcons.lock,
+                obscureText: true,
                 controller: _password1Controller,
                 onChanged: (value) {},
               ),
               RoundedPasswordField(
                 hintText: "Nhập lại mật khẩu",
+                icon: LineAwesomeIcons.lock_open,
+                obscureText: true,
                 controller: _password2Controller,
                 onChanged: (value) {},
               ),
               RoundedButton(
                 text: "Đăng ký",
                 press:(){
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  singUp(_usernameController.text,_password1Controller.text,_password2Controller.text);
+                  _validateAndLogin(_usernameController.text,_password1Controller.text,_password2Controller.text);
                 },
               ),
               SizedBox(height: size.height * 0.03),
               AlreadyHaveAnAccountCheck(
                 login: false,
                 press: () {
-                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> LoginScreen()), (Route<dynamic> route) => false);
+                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (BuildContext ctx) => LoginScreen()));
                 },
               ),
             ],

@@ -1,9 +1,7 @@
 package com.macia.charitysystem.service;
 
 import com.macia.charitysystem.model.DonateActivity;
-import com.macia.charitysystem.model.Project;
 import com.macia.charitysystem.repository.DonateActivityRepository;
-import com.macia.charitysystem.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DonateActivityService {
@@ -26,27 +22,23 @@ public class DonateActivityService {
         return donateAvtRepo.saveAndFlush(donateActivity);
     }
 
-    public List<DonateActivity> findAllDonateActivityt(){
-        TypedQuery<DonateActivity> query =  em.createNamedQuery("named.donate_activity.findAll", DonateActivity.class);
-        return query.getResultList();
-    }
-
-    public DonateActivity findDonateActivityById(Integer id){
-        try{
-            TypedQuery<DonateActivity> query =  em.createNamedQuery("named.donate_activity.findById", DonateActivity.class);
-            query.setParameter("id", id);
+    public DonateActivity findDonateActivityByDonatorId(Integer id) {
+        try {
+            TypedQuery<DonateActivity> query = em.createNamedQuery("named.donate_activity.findByDonatorId", DonateActivity.class);
+            query.setParameter("dntid", id);
             return query.getSingleResult();
-        } catch(NoResultException e) {
+        } catch (NoResultException e) {
             return null;
         }
     }
-    public DonateActivity findDonateActivityByDonatorIdAndProjectID(Integer donator_id, Integer project_id){
-        try{
-            TypedQuery<DonateActivity> query =  em.createNamedQuery("named.donate_activity.findByDonatorIdAndProjectId", DonateActivity.class);
+
+    public DonateActivity findDonateActivityByDonatorIdAndProjectID(Integer donator_id, Integer project_id) {
+        try {
+            TypedQuery<DonateActivity> query = em.createNamedQuery("named.donate_activity.findByDonatorIdAndProjectId", DonateActivity.class);
             query.setParameter("did", donator_id);
             query.setParameter("pid", project_id);
             return query.getSingleResult();
-        } catch(NoResultException e) {
+        } catch (NoResultException e) {
             return null;
         }
     }

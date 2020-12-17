@@ -22,7 +22,7 @@ public class AppUser implements Serializable {
     @Column(unique = true)
     private String username;
 
-    @Column(length=200)
+    @Column(length = 200)
     private String password;
 
     @Enumerated(EnumType.STRING)

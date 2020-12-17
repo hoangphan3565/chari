@@ -1,169 +1,82 @@
-import 'dart:async';
+
+import 'package:charity_donator_app/constants.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 import 'dart:convert';
 import 'dart:convert' show utf8;
+import 'package:http/http.dart' as http;
 
 import 'package:charity_donator_app/API.dart';
-import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/models/models.dart';
 import 'package:charity_donator_app/screens/screens.dart';
 import 'package:charity_donator_app/utility/utility.dart';
-import 'package:charity_donator_app/widgets/custom_alert_dialog.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';
-import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
-import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class HomeScreen extends StatefulWidget {
+class FavoriteScreen extends StatefulWidget {
   final List<Project> projects;
-  final List<ProjectType> project_types;
-  HomeScreen({Key key, @required this.projects,this.project_types}) : super(key: key);
-
+  FavoriteScreen({@required this.projects});
   @override
-  _HomeScreenState createState()=> _HomeScreenState();
+  _FavoriteScreenState createState()=> _FavoriteScreenState();
 }
 
-
-class _HomeScreenState extends State<HomeScreen>{
+class _FavoriteScreenState extends State<FavoriteScreen>{
 
   TextEditingController _moneyControllerField = TextEditingController();
   TextEditingController _messageControllerField = TextEditingController();
   String donate_money="";
 
-  int _selectedProjectType  = 0;
-  var listProjectIdFavorite = new List<String>();
+  var favorite_projects = new List<Project>();
+  List<String> listProjectIdFavorite = new List<String>();
 
 
-
-  @override
   initState() {
     super.initState();
-    _getlistProjectIdFavorite();
-    _selectedProjectType  = 0;
+    _getFavoriteProjects();
   }
 
-  @override
   dispose() {
     super.dispose();
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.green[400],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(18),
-            ),
-          ),
-          centerTitle: true,
-          title: Text(
-            'Trang chủ',
-            style: const TextStyle(
-              color: kPrimaryLightColor,
-              fontSize: 27.0,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -0.2,
-            ),
-          ),
-        ),
-        body: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              backgroundColor: Colors.white,
-              centerTitle: true,
-              floating: true,
-              title: widget.project_types.length == 0 ? Text(""):
-              Text(
-                widget.project_types.where((i) => i.id==_selectedProjectType).elementAt(0).name.toString(),
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  color: kPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              actions: <Widget>[
-                widget.project_types.length == 0 ? Text(""):
-                PopupMenuButton<ProjectType>(
-                  icon:  Icon(Icons.menu_open_outlined,),
-                  onSelected: (ProjectType result) { setState(() {
-                    _selectedProjectType = result.id;
-                    print(_selectedProjectType);
-                  }); },
-                  itemBuilder: (BuildContext context) {
-                    return widget.project_types.map((ProjectType choice) {
-                      return PopupMenuItem(
-                        value: choice,
-                        child: Text(choice.name),
-                      );
-                    }).toList();
-                  },
-                )
-              ],
-            ),
-            _selectedProjectType == 0 ?
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                  return buildPostSection(widget.projects[index]);
-                },
-                childCount: widget.projects.length,
-              ),
-            )
-                :
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                  return buildPostSection(widget.projects.where((i) => i.prt_id==_selectedProjectType).elementAt(index));
-                },
-                childCount: widget.projects.where((i) => i.prt_id==_selectedProjectType).length,
-              ),
-            )
-          ],
-        )
-    );
-  }
-
-  //Function and dialog
-  _getlistProjectIdFavorite() async{
+  _getFavoriteProjects() async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String temp = _prefs.getString('donator_favorite_project');
     if(temp!=null){
-      setState(() {
-        listProjectIdFavorite = temp.split(" ");
+      listProjectIdFavorite = temp.split(" ");
+    }
+    //chọn cái bài viết mà nhà hảo tâm đã quan tâm để lưu vào một danh sách khác
+    for (int i = 0;i < widget.projects.length;i++) {
+      if(listProjectIdFavorite.contains(widget.projects[i].prj_id.toString()) == true)  {
+        setState(() {
+          favorite_projects.add(widget.projects[i]);
+        });
+      }
+    }
+    //Vì đã tạo một danh sách mới với các bài viết đã quan tâm, Tải hình ảnh của các bài viết này lên để tránh lỗi
+    for (int i = 0;i < favorite_projects.length;i++) {
+      API.getImageByProjectID(favorite_projects[i].prj_id).then((response) {
+        setState(() {
+          List<String> imglist = (json.decode(response.body) as List<dynamic>).cast<String>();
+          favorite_projects[i].imgList = imglist;
+        });
       });
     }
   }
 
-  _changeStateFavorite(int projectid,bool curstate)async{
+  _removeHeart(Project project)async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String username = _prefs.get("username");
     int donatorid = _prefs.get("donator_id");
-    if(username == null){
-      _showDialogAskForLoginOrRegister(context);
-      return;
-    }
-    if(curstate){
-      API.postRemoveProjectFromFavorite(projectid, donatorid).then((response) {
-        setState(() {
-          _prefs.setString('donator_favorite_project',json.decode(response.body)['favoriteProject']);
-          print('hủy thả tim! danh sách hiện tại: '+_prefs.getString('donator_favorite_project').toString());
-        });
+    API.postRemoveProjectFromFavorite(project.prj_id, donatorid).then((response) {
+      setState(() {
+        _prefs.setString('donator_favorite_project',json.decode(response.body)['favoriteProject']);
       });
-      listProjectIdFavorite.remove(projectid.toString());
-    }else{
-      API.postAddProjectToFavorite(projectid, donatorid).then((response) {
-        setState(() {
-          _prefs.setString('donator_favorite_project',json.decode(response.body)['favoriteProject']);
-          print('thả tim! danh sách hiện tại: '+_prefs.getString('donator_favorite_project').toString());
-        });
-      });
-      listProjectIdFavorite.add(projectid.toString());
-    }
+    });
+    listProjectIdFavorite.remove(project.prj_id.toString());
+    favorite_projects.remove(project);
   }
 
   _showDonateDialog(BuildContext context,Project project) {
@@ -237,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen>{
                       text: "Ủng hộ",
                       press: ()async{
                         SharedPreferences prefs = await SharedPreferences.getInstance();
-                        int donator_id = prefs.getInt('donator_id');
-                        if(donator_id==null){donator_id = -1;}  //nếu chưa đăng nhập
-                        String url = baseUrl+"/paypal/donatorid/${donator_id}/projectid/${project.prj_id}/donate";
+                        int did = prefs.getInt('donator_id');
+                        if(did==null){did = -1;}
+                        String url = baseUrl+"/paypal/donatorid/${did}/projectid/${project.prj_id}/donate";
                         final body = jsonEncode(<String, String>{
                           "price": _moneyControllerField.text,
                           "description":_messageControllerField.text
@@ -262,56 +175,87 @@ class _HomeScreenState extends State<HomeScreen>{
         });
   }
 
-  _showDialogAskForLoginOrRegister(BuildContext context){
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            content: Container(
-              width: MediaQuery.of(context).size.width / 1,
-              height: MediaQuery.of(context).size.height /3.3,
-              color: Colors.white,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Text("Để thực hiện chức năng này bạn hãy đăng nhập trước",
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    RoundedButton(
-                        text: "Đăng nhập",
-                        press: (){
-                          Navigator.pop(context);
-                          Navigator.push(context,MaterialPageRoute(builder: (BuildContext ctx) => LoginScreen()));
-                        }
-                    ),
-                    Container(
-                      height: 1.5,
-                      color: Colors.grey[300],
-                      margin: EdgeInsets.symmetric(horizontal: 0),
-                    ),
-                    SizedBox(height: 10),
-                    Text("Nếu chưa có tài khoản đăng ký ngay tại đây"),
-                    RoundedButton(
-                        text: "Đăng ký",
-                        press: (){
-                          Navigator.pop(context);
-                          Navigator.push(context,MaterialPageRoute(builder: (BuildContext ctx) => SignUpScreen()));
-                        }
-                    ),
-                  ],
-                ),
-              ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green[400],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(18),
+          ),
+        ),
+        centerTitle: true,
+        title: Text(
+          'Đã quan tâm',
+          style: const TextStyle(
+            color: kPrimaryLightColor,
+            fontSize: 27.0,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.2,
+          ),
+        ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Container(
+          //   margin: EdgeInsets.fromLTRB(0,35,0,10),
+          //   padding: EdgeInsets.symmetric(horizontal: 15),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Text(
+          //         'Đã quan tâm',
+          //         style: const TextStyle(
+          //           color: kPrimaryColor,
+          //           fontSize: 20.0,
+          //           fontWeight: FontWeight.bold,
+          //           letterSpacing: -1.2,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          Expanded(
+            child:  Container(
+                decoration: BoxDecoration(
+                    borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(0))),
+                child: favorite_projects.length == 0 ?
+                Container(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 8,),
+                        Text("Bạn chưa quan tâm bài viết nào!"),
+                        SizedBox(height: 8,),
+                        Container(
+                          height: 0,
+                          margin: EdgeInsets.symmetric(horizontal: 0),
+                        ),
+                      ],
+                    )
+                )
+                    :
+                Container(
+                  child:  CustomScrollView(
+                    slivers:  [
+                        SliverList(delegate: SliverChildBuilderDelegate((context, index)
+                        {return buildPostSection(favorite_projects[index]);},
+                          childCount: favorite_projects.length,
+                        ),
+                        )
+                      ],
+                  ),
+                )
             ),
-          );
-        });
+          )
+        ],
+      ),
+    );
   }
 
-  //Build component
+
   Container buildPostSection(Project project) {
     return Container(
       margin: EdgeInsets.fromLTRB(8,4,8,4),
@@ -373,8 +317,8 @@ class _HomeScreenState extends State<HomeScreen>{
         InkWell(
           onTap: ()=>{
             Navigator.push(
-            context,
-               MaterialPageRoute(builder: (context) => ProjectDetailsScreen(project: project,)),
+              context,
+              MaterialPageRoute(builder: (context) => ProjectDetailsScreen(project: project,)),
             ),
           },
           child: Container(
@@ -395,21 +339,16 @@ class _HomeScreenState extends State<HomeScreen>{
                 )),
           ),
         ),
-
         Positioned(
           bottom: 20,
           right: 20,
           child: InkWell(
-            onTap: ()=> {
-              _changeStateFavorite(project.prj_id,listProjectIdFavorite.contains(project.prj_id.toString())),
-            },
-            child: listProjectIdFavorite.contains(project.prj_id.toString()) == true ?
-            Icon(Icons.favorite, size: 35, color: Colors.green.withOpacity(0.9))
-                :
-            Icon(Icons.favorite, size: 35, color: Colors.white.withOpacity(0.9)),
+              onTap: ()=> {
+                _removeHeart(project),
+              },
+              child: Icon(Icons.favorite, size: 35, color: Colors.green.withOpacity(0.9))
           ),
         )
-
       ],
     );
   }
@@ -425,8 +364,8 @@ class _HomeScreenState extends State<HomeScreen>{
     MoneyFormatterOutput fo1 = new FlutterMoneyFormatter(
         amount: double.tryParse(project.cur_money.toString()),
         settings: MoneyFormatterSettings(
-            thousandSeparator: '.',
-            decimalSeparator: ',',
+          thousandSeparator: '.',
+          decimalSeparator: ',',
         )
     ).output;
     MoneyFormatterOutput fo2 = new FlutterMoneyFormatter(
@@ -593,5 +532,4 @@ class _HomeScreenState extends State<HomeScreen>{
       ],
     );
   }
-
 }

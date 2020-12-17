@@ -1,10 +1,6 @@
 package com.macia.charitysystem.service;
 
-import com.macia.charitysystem.model.DonateActivity;
-import com.macia.charitysystem.model.ProjectType;
 import com.macia.charitysystem.model.SupportedPeople;
-import com.macia.charitysystem.repository.SupportedPeopleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -17,19 +13,12 @@ public class SupportedPeopleService {
     @PersistenceContext
     private EntityManager em;
 
-    @Autowired
-    private SupportedPeopleRepository supportedPeopleRepo;
-
-    public SupportedPeople save(SupportedPeople supportedPeople) {
-        return supportedPeopleRepo.saveAndFlush(supportedPeople);
-    }
-
-    public SupportedPeople findById(Integer id){
-        try{
-            TypedQuery<SupportedPeople> query =  em.createNamedQuery("named.supportedpeople.findById", SupportedPeople.class);
+    public SupportedPeople findById(Integer id) {
+        try {
+            TypedQuery<SupportedPeople> query = em.createNamedQuery("named.supportedpeople.findById", SupportedPeople.class);
             query.setParameter("id", id);
             return query.getSingleResult();
-        } catch(NoResultException e) {
+        } catch (NoResultException e) {
             return null;
         }
     }

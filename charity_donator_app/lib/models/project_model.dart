@@ -47,20 +47,4 @@ class Project {
         status = json['status'],
         project_type_name=json['project_type_name'];
 
-  Map toJson() {
-    return {
-      'prj_id': prj_id,
-      'project_name': project_name,
-      'brief_description': brief_description,
-      'description': description,
-      'image_url':image_url,
-      'video_url':video_url,
-      'cur_money':cur_money,
-      'target_money':target_money,
-      'num_of_donations':num_of_donations,
-      'remaining_term':remaining_term,
-      'prt_id':prt_id,
-      'status':status,
-      'project_type_name':project_type_name};
-  }
 }

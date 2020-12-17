@@ -18,11 +18,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>{
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  bool _isLoginFailed = false;
-  bool _isLoading = false;
 
-  //Hàm xử lý đăng nhập bằng API
-  logIn(String username, String password) async{
+
+  _logIn(String username, String password) async{
     String url = baseUrl+login;
     final body = jsonEncode(<String, String>{
       "username":username,
@@ -30,71 +28,55 @@ class _LoginScreenState extends State<LoginScreen>{
     });
     var jsonResponse;
     var res = await http.post(url,headers:header,body: body);
+    jsonResponse = json.decode(utf8.decode(res.bodyBytes));
+    //Hiện thông báo theo messenge được trả về từ server
+    Fluttertoast.showToast(
+        msg: jsonResponse['messenger'],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
     //Kiem tra API Status
-    if(res.statusCode == 200){
-      jsonResponse = json.decode(utf8.decode(res.bodyBytes));
-      if(jsonResponse != null){
-        if(jsonResponse['data']['usertype']!='Donator'){
-          Fluttertoast.showToast(
-              msg: "Ứng dụng này chỉ dành cho nhà từ thiện",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-              fontSize: 16.0
-          );
-          return;
-        }
-        // lưu token vào SharedPreferences
-        SharedPreferences _prefs = await SharedPreferences.getInstance();
-        _prefs.setString('username',jsonResponse['data']['username']);
-        _prefs.setString('password',jsonResponse['data']['password']);
+    if(res.statusCode == 200) {
+      // lưu token vào SharedPreferences
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      _prefs.setString('username',jsonResponse['data']['username']);
+      _prefs.setString('password',jsonResponse['data']['password']);
 
-        // Lưu thông tin người dùng đã đăng nhập... Vì lúc tạo người dùng mới, app đang dùng là app của donator, phía server sẽ lưu đồng thời cả app user và thông tin của donator,
-        // lúc đăng ký lần đầu thì thông tin của donator chỉ có mỗi số điện thoại
-        var jsonResponse2;
-        var res2 = await http.get(baseUrl + donators +"/phone/"+username,headers:header);
-        jsonResponse2 = json.decode(utf8.decode(res2.bodyBytes));
-        _prefs.setInt('donator_id',jsonResponse2['dnt_ID']);
-        _prefs.setString('donator_address',jsonResponse2['address']);
-        _prefs.setString('donator_phone',jsonResponse2['phoneNumber']);
-        _prefs.setString('donator_avatar_url',jsonResponse2['avatarUrl']);
-        _prefs.setString('donator_full_name',jsonResponse2['fullName']);
-        _prefs.setString('donator_favorite_project',jsonResponse2['favoriteProject']);
-
-        //Hiện thông báo đăng nhập thành công
-        Fluttertoast.showToast(
-            msg: "Đăng nhập thành công",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
-        //Chuyển hướng đến trang chính và xóa tất cả context trước đó
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> MainScreen()), (Route<dynamic> route) => false);
+      // Lưu thông tin người dùng đã đăng nhập... Vì lúc tạo người dùng mới, app đang dùng là app của donator, phía server sẽ lưu đồng thời cả app user và thông tin của donator,
+      // lúc đăng ký lần đầu thì thông tin của donator chỉ có mỗi số điện thoại
+      var jsonResponse2;
+      var res2 = await http.get(baseUrl + donators +"/phone/"+username,headers:header);
+      jsonResponse2 = json.decode(utf8.decode(res2.bodyBytes));
+      _prefs.setInt('donator_id',jsonResponse2['dnt_ID']);
+      if(jsonResponse2['address']==null){
+        _prefs.setString('donator_address','');
       }
-    }
-    else{
-      Fluttertoast.showToast(
-          msg: "Sai SĐT hoặc mật khẩu",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-      setState(() {
-        _isLoading = false;
-        _isLoginFailed = true;
-      });
-      print("Response body: ${res.body}");
+      else{
+        _prefs.setString('donator_address',jsonResponse2['address'].toString());
+      }
+      if(jsonResponse2['fullName']==null){
+        _prefs.setString('donator_full_name','Nhà hảo tâm');
+      }
+      else{
+        _prefs.setString('donator_full_name',jsonResponse2['fullName'].toString());
+      }
+      if(jsonResponse2['avatarUrl']==null){
+        _prefs.setString('donator_avatar_url','https://1.bp.blogspot.com/-kFguDxc0qe4/XyzyK1y6eiI/AAAAAAAAwW8/XcAuOQ2qvQYhoDe4Bv0eLX9eye7FnmKKgCLcBGAsYHQ/s1600/co-4-la%2B%25283%2529.jpg');
+      }
+      else{
+        _prefs.setString('donator_avatar_url',jsonResponse2['avatarUrl'].toString());
+      }
+      _prefs.setString('donator_phone',jsonResponse2['phoneNumber'].toString());
+      _prefs.setString('donator_favorite_project',jsonResponse2['favoriteProject'].toString());
+
+      //Chuyển hướng đến trang chính và xóa tất cả context trước đó
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> AppBarScreen()), (Route<dynamic> route) => false);
     }
   }
-
 
 
   @override
@@ -129,22 +111,21 @@ class _LoginScreenState extends State<LoginScreen>{
                 ),
                 RoundedPasswordField(
                   hintText: "Nhập mật khẩu",
+                  obscureText: true,
+                  icon: LineAwesomeIcons.lock,
                   controller: _passwordController,
                   onChanged: (value) {},
                 ),
                 RoundedButton(
                   text: "Đăng nhập",
                   press: (){
-                    setState(() {
-                      _isLoading = true;
-                    });
-                    logIn(_usernameController.text,_passwordController.text);
+                    _logIn(_usernameController.text,_passwordController.text);
                   },
                 ),
                 SizedBox(height: size.height * 0.03),
                 AlreadyHaveAnAccountCheck(
                   press: () {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> SignUpScreen()), (Route<dynamic> route) => false);
+                    Navigator.pushReplacement(context,MaterialPageRoute(builder: (BuildContext ctx) => SignUpScreen()));
                   },
                 ),
               ],

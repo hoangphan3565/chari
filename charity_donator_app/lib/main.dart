@@ -1,6 +1,7 @@
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/screens/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 void main() => runApp(MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
           primaryColor: kPrimaryColor,
           scaffoldBackgroundColor: Colors.white,
         ),
-        home: MainScreen()
+        home: AppBarScreen()
     );
   }
 }

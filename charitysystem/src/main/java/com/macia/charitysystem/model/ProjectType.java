@@ -19,20 +19,20 @@ import java.util.List;
         @NamedQuery(name = "named.projecttype.findAll",
                 query = "SELECT p FROM ProjectType p"),
         @NamedQuery(name = "named.projecttype.findById",
-            query = "SELECT p FROM ProjectType p where p.PRT_ID =:id"),
+                query = "SELECT p FROM ProjectType p where p.PRT_ID =:id"),
 })
 public class ProjectType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer PRT_ID;
 
-    @Column(unique = true,length=10)
+    @Column(unique = true, length = 10)
     private String ProjectTypeCode;
 
-    @Column(length=50)
+    @Column(length = 50)
     private String ProjectTypeName;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "projectType")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "projectType")
     private List<Project> projects;
 }

@@ -19,19 +19,19 @@ public class Collaborator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer CLB_ID;
 
-    @Column(length=200)
+    @Column(length = 200)
     private String fullName;
 
-    @Column(length=200)
+    @Column(length = 200)
     private String address;
 
-    @Column(length=10)
+    @Column(length = 10)
     private String phoneNumber;
 
-    @Column(length=500)
+    @Column(length = 500)
     private String certificate;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "collaborator")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "collaborator")
     private List<Project> projects;
 }

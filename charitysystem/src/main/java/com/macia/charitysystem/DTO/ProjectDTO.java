@@ -1,4 +1,5 @@
 package com.macia.charitysystem.DTO;
+
 import lombok.*;
 
 @Data

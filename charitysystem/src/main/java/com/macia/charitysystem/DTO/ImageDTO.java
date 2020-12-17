@@ -1,6 +1,5 @@
 package com.macia.charitysystem.DTO;
 
-import com.macia.charitysystem.model.Project;
 import lombok.*;
 
 

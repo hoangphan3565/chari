@@ -25,19 +25,19 @@ public class SupportedPeople {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer STP_ID;
 
-    @Column(length=200)
+    @Column(length = 200)
     private String fullName;
 
-    @Column(length=200)
+    @Column(length = 200)
     private String address;
 
-    @Column(length=10)
+    @Column(length = 10)
     private String phoneNumber;
 
-    @Column(length=50)
+    @Column(length = 50)
     private String bankAccount;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "supportedPeople")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "supportedPeople")
     private List<Project> projects;
 }

@@ -23,8 +23,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProjectDetailsScreen extends StatefulWidget {
   final Project project;
-  final bool quickDonate;
-  ProjectDetailsScreen({@required this.project,this.quickDonate});
+  ProjectDetailsScreen({@required this.project});
   @override
   _ProjectDetailsScreenState createState() => _ProjectDetailsScreenState();
 }
@@ -44,6 +43,12 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   void initState() {
     super.initState();
     this.initializePlayer(widget.project.video_url);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    this._videoPlayerController.dispose();
   }
 
   Future<void> initializePlayer(String video_url) async {
@@ -68,8 +73,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     setState(() {});
   }
 
-  showAlertDialog(BuildContext context,Project project) {
-
+  _showDonatrDialog(BuildContext context,Project project) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -101,18 +105,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     color: Colors.blueAccent,
                     iconSize: 40,
                   ),
-                  // RoundedInputField(
-                 //    hintText: "Nhập số tiền",
-                 //    icon: Icons.monetization_on_outlined,
-                 //    controller: _moneyControllerField,
-                 //  ),
-                 //  SizedBox(height: 10),
-                 //  RoundedInputField(
-                 //    hintText: "Nhập lời nhắn",
-                 //    icon: Icons.messenger_outline,
-                 //    controller: _messageControllerField,
-                 //  ),
-
                   TextField(
                     controller: _moneyControllerField,
                     keyboardType: TextInputType.number,
@@ -160,9 +152,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         "description":_messageControllerField.text
                       });
                       var res = await http.post(url,headers:header,body: body);
+                      Navigator.pop(context);
                       Navigator.push(
                           context, MaterialPageRoute(
-                          builder: (context)=>DonateScreen(res.body.toString())
+                          builder: (context)=>DonateScreen(paypalurl: res.body.toString(),project: project, money: _moneyControllerField.text,)
                       )
                       );
                     },
@@ -175,42 +168,37 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: Text(
+          'Thông tin chi tiết',
+          style: const TextStyle(
+            color: kPrimaryColor,
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -1.2,
+          ),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.more_vert,
+            ),
+            onPressed: () {
+              // do something
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          Container(
-            margin: EdgeInsets.only(top: 35),
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(Icons.arrow_back)),
-                Text(
-                  'Thông tin chi tiết',
-                  style: const TextStyle(
-                    color: kPrimaryColor,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -1.2,
-                  ),
-                ),
-                GestureDetector(
-                    onTap: () {},
-                    child: Icon(Icons.more_vert),),
-              ],
-            ),
-          ),
           Expanded(
             child: Container(
-              margin: EdgeInsets.only(left: 5, right: 5, top: 8),
+              margin: EdgeInsets.only(top: 0),
               decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.2),
                   borderRadius:
@@ -222,6 +210,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     SizedBox(height: 8),
                     buildProjectInfo(widget.project),   //Thông tin vắn tắt
                     buildProjectDetails(widget.project),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -240,7 +229,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         child:((widget.project.status=='activating')?
           FlatButton(
             onPressed:()=> {
-            showAlertDialog(context,widget.project)
+            _showDonatrDialog(context,widget.project)
           },
             child: Text(
               "Quyên góp ngay",
@@ -295,8 +284,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   Container buildPostVideo() {
     return Container(
-      height: MediaQuery.of(context).size.width - 200,
-      child: _chewieController != null &&_chewieController.videoPlayerController.value.initialized ? Chewie( controller: _chewieController,) : Column(
+      height: MediaQuery.of(context).size.width - 180,
+      child: _chewieController != null &&_chewieController.videoPlayerController.value.initialized ? Chewie( controller: _chewieController,) :
+      Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -310,7 +300,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   Container buildProjectInfo(Project project){
     return Container(
-      margin: EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.fromLTRB(8,5,8,5),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -348,9 +338,48 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
+  Container buildDonatorInfo(){
+    return Container(
+      margin: EdgeInsets.fromLTRB(8,5,8,5),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Nhà hảo tâm",
+            style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.black
+            ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            "xxxxxxxx231",
+            style: TextStyle(
+                fontSize: 12,
+                color: Colors.black54),
+          ),
+          SizedBox(height:5),
+          Container(
+            height: 1,
+            color: Colors.grey[300],
+            margin: EdgeInsets.symmetric(horizontal: 0),
+          ),
+        ],
+      ),
+    );
+  }
+
   Container buildProjectDetails(Project project){
     return Container(
-      margin: EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.fromLTRB(8,5,8,5),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -444,6 +473,39 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ),
     );
   }
+
+  //Mới chỉ là giao diện - sẽ phát triển chức năng này sau
+
+  // Container buildDonatorsList(){
+  //   return Container(
+  //     margin: EdgeInsets.fromLTRB(8,5,8,45),
+  //     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(5),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           "Danh sách các nhà hảo tâm",
+  //           style: TextStyle(
+  //               fontSize: 16,
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.black),
+  //         ),
+  //         Container(
+  //             child: Column(children: <Widget>[
+  //               buildDonatorInfo(),
+  //               buildDonatorInfo(),
+  //               buildDonatorInfo(),
+  //               buildDonatorInfo(),
+  //             ],)
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Row buildInfoDetailsRow(Project project) {
     return Row(
@@ -545,6 +607,27 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   }
 
   Row buildProgressPercentRow(Project project) {
+    double percent;
+    if(project.cur_money >= project.target_money){
+      percent = 1.0;
+    }
+    else{
+      percent = project.cur_money / project.target_money;
+    }
+    MoneyFormatterOutput fo1 = new FlutterMoneyFormatter(
+        amount: double.tryParse(project.cur_money.toString()),
+        settings: MoneyFormatterSettings(
+          thousandSeparator: '.',
+          decimalSeparator: ',',
+        )
+    ).output;
+    MoneyFormatterOutput fo2 = new FlutterMoneyFormatter(
+        amount: double.tryParse(project.target_money.toString()),
+        settings: MoneyFormatterSettings(
+          thousandSeparator: '.',
+          decimalSeparator: ',',
+        )
+    ).output;
     return Row(
         children: [
           if (project.status != 'overdue')
@@ -552,7 +635,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Đã quyên góp được "+project.cur_money.toString()+" đ / "+project.target_money.toString()+" đ",
+                  "Đã quyên góp được ${fo1.withoutFractionDigits} đ / ${fo2.withoutFractionDigits} đ",
                   style: TextStyle(
                       fontSize: 12,
                       color: Colors.black),
@@ -563,7 +646,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 LinearPercentIndicator(
                   width: MediaQuery.of(context).size.width-60,
                   lineHeight: 8.0,
-                  percent: project.cur_money/project.target_money,
+                  percent: percent,
                   progressColor: Colors.green[600],
                 ),
               ],
@@ -584,7 +667,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 LinearPercentIndicator(
                   width: MediaQuery.of(context).size.width-60,
                   lineHeight: 8.0,
-                  percent: project.cur_money/project.target_money,
+                  percent: percent,
                   progressColor: Colors.grey,
                 ),
               ],

@@ -7,9 +7,10 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwtUserDTO {
+public class ChangePassDTO {
     private String username;
+    private String cur_password;
     private String password1;
     private String password2;
-    private String usertype;
+    private String user_type;
 }

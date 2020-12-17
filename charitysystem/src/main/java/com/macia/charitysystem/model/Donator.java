@@ -19,13 +19,13 @@ public class Donator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer DNT_ID;
 
-    @Column(length=200)
+    @Column(length = 200)
     private String fullName;
 
-    @Column(length=200)
+    @Column(length = 200)
     private String address;
 
-    @Column(length=10)
+    @Column(length = 10)
     private String phoneNumber;
 
     @Column()
@@ -35,10 +35,10 @@ public class Donator {
     private String favoriteProject;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "donator")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "donator")
     private List<DonateActivity> donateActivities;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY,mappedBy = "donator")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "donator")
     private List<Transactions> transactions;
 }

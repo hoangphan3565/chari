@@ -14,6 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedQueries({
+        @NamedQuery(name = "named.donate_details.findByDonatorId",
+                query = "SELECT NEW com.macia.charitysystem.DTO.DonateDetailsDTO(dd.money,dd.donateDate,dd.donateActivity.project.PRJ_ID,dd.donateActivity.project.projectName) FROM DonateDetails dd where dd.donateActivity.donator.DNT_ID =:dntid order by dd.donateDate desc"),
+})
 public class DonateDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

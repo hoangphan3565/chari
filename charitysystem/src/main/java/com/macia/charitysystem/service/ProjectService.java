@@ -2,7 +2,6 @@ package com.macia.charitysystem.service;
 
 import com.macia.charitysystem.DTO.ProjectDTO;
 import com.macia.charitysystem.model.Project;
-import com.macia.charitysystem.model.ProjectType;
 import com.macia.charitysystem.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,47 +22,28 @@ public class ProjectService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ProjectDTO> findAllProjectDTO(){
+    public List<ProjectDTO> findAllProjectDTO() {
         StoredProcedureQuery query = this.em.createNamedStoredProcedureQuery("named_getProjectDTOList");
         query.execute();
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    public List<ProjectDTO> findProjectDTOById(Integer id){
-        StoredProcedureQuery query = this.em.createNamedStoredProcedureQuery("named_getProjectDTOById");
-        query.setParameter("id",id);
-        query.execute();
-        return query.getResultList();
-    }
-    @SuppressWarnings("unchecked")
-    public List<ProjectDTO> findAllProjectDTOByType(Integer prtid){
+    public List<ProjectDTO> findAllProjectDTOByType(Integer prtid) {
         StoredProcedureQuery query = this.em.createNamedStoredProcedureQuery("named_getProjectDTOListByType");
-        query.setParameter("prtid",prtid);
+        query.setParameter("prtid", prtid);
         query.execute();
         return query.getResultList();
     }
 
-
-
-    public List<Project> findAllProject(){
-        TypedQuery<Project> query =  em.createNamedQuery("named.project.findAll", Project.class);
-        return query.getResultList();
-    }
-
-    public Project findProjectById(Integer id){
-        try{
-            TypedQuery<Project> query =  em.createNamedQuery("named.project.findById", Project.class);
+    public Project findProjectById(Integer id) {
+        try {
+            TypedQuery<Project> query = em.createNamedQuery("named.project.findById", Project.class);
             query.setParameter("id", id);
             return query.getSingleResult();
-        } catch(NoResultException e) {
+        } catch (NoResultException e) {
             return null;
         }
     }
 
-    public List<Project> findProjectByTypeId(Integer id){
-        TypedQuery<Project> query =  em.createNamedQuery("named.project.findByProjectTypeId", Project.class);
-        query.setParameter("id", id);
-        return query.getResultList();
-    }
 }

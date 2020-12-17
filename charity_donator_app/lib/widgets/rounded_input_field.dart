@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class RoundedInputField extends StatelessWidget {
   final String hintText;
   final IconData icon;
+  final IconData icon2;
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
   final TextInputType keyboardType;
@@ -14,6 +15,7 @@ class RoundedInputField extends StatelessWidget {
     this.keyboardType,
     this.controller,
     this.icon,
+    this.icon2,
     this.onChanged,
   }) : super(key: key);
 
@@ -28,6 +30,10 @@ class RoundedInputField extends StatelessWidget {
         decoration: InputDecoration(
           icon: Icon(
             icon,
+            color: kPrimaryColor,
+          ),
+          suffixIcon: Icon(
+            icon2,
             color: kPrimaryColor,
           ),
           hintText: hintText,

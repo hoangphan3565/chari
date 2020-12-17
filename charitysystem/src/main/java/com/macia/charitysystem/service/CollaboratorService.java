@@ -1,7 +1,6 @@
 package com.macia.charitysystem.service;
 
 import com.macia.charitysystem.model.Collaborator;
-import com.macia.charitysystem.model.Donator;
 import com.macia.charitysystem.repository.CollaboratorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ public class CollaboratorService {
     @Autowired
     private CollaboratorRepository collaboratorRepo;
 
-    public Collaborator save(Collaborator collaborator) {
-        return collaboratorRepo.saveAndFlush(collaborator);
+    public void save(Collaborator collaborator) {
+        collaboratorRepo.saveAndFlush(collaborator);
     }
 }
