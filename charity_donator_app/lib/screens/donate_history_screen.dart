@@ -50,32 +50,44 @@ class _HistoryScreenState extends State<HistoryScreen>{
                   color: Colors.grey.withOpacity(0.2),
                   borderRadius:
                   BorderRadius.vertical(top: Radius.circular(0))),
-              child: widget.donate_details_list.length == 0 ?
-                Container(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 8,),
-                      Text("Bạn chưa có lịch sử ủng hộ nào!"),
-                      SizedBox(height: 8,),
-                      Container(
-                        height: 0,
-                        margin: EdgeInsets.symmetric(horizontal: 0),
-                      ),
-                    ],
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  widget.donate_details_list.length == 0 ?
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                        return Container(
+                          margin: const EdgeInsets.only(top: 300.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Chưa lịch sử ủng hộ nào!",
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  color: kPrimaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      childCount: 1,
+                    ),
                   )
-                )
-                    :
-                Container(
-                  child:  CustomScrollView(
-                    slivers: [
-                      SliverList(delegate: SliverChildBuilderDelegate((context, index)
-                      {return buildProjectInfo(widget.donate_details_list[index]);},
-                        childCount: widget.donate_details_list.length,
-                      ),
-                      )
-                    ],
-                  ),
-                )
+                      :
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index){
+                        return buildProjectInfo(widget.donate_details_list[index]);},
+                      childCount:  widget.donate_details_list.length,
+                    ),
+                  )
+                ],
+              ),
             ),
           )
         ],

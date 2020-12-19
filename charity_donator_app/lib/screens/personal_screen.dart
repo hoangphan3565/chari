@@ -44,32 +44,40 @@ class _PersonalScreenState extends State<PersonalScreen> {
     });
   }
 
-  _validateAndChangePassword(String username, String cur_password,String new_password1,String new_password2){
-    if(username.length!=10){
+  _validateAndChangePassword(String username,String password, String cur_password,String new_password1,String new_password2){
+    String error_message;
+    if(cur_password.length != 0 && new_password1.length !=0 && new_password2.length!=0) {
+      if(cur_password==password){
+        if(new_password1==new_password2){
+          if(new_password1!=password){
+            if(Validate.validatePassword(new_password1)){
+              _changePassword(username, cur_password, new_password1, new_password2);
+            }else{
+              error_message='Mật khẩu mới phải có ít nhất 6 ký tự và gồm chữ và số!';
+            }
+          }else{
+            error_message='Mật khẩu mới phải khác mật khẩu cũ!';
+          }
+        }else{
+          error_message='Mật khẩu mới không trùng khớp!';
+        }
+      }else{
+        error_message='Mật khẩu hiện tại không chính xác!';
+      }
+    }else{
+      error_message='Không được trống thông tin nào';
+    }
+    if(error_message.length>0){
       Fluttertoast.showToast(
-          msg: 'Số điện thoại không chính xác',
+          msg: error_message,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.orangeAccent,
           textColor: Colors.white,
           fontSize: 16.0
       );
-      return;
     }
-    if(new_password1.length < 6 || !Validate.validatePassword(new_password1)){
-      Fluttertoast.showToast(
-          msg: 'Mật khẩu phải có ít nhất 6 ký tự, chứa ký tự in hoa, số và ký tự đặc biệt!',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-      return;
-    }
-    _changePassword(username, cur_password, new_password1, new_password2);
   }
 
   _changePassword(String username, String cur_password,String new_password1,String new_password2) async{
@@ -100,40 +108,6 @@ class _PersonalScreenState extends State<PersonalScreen> {
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       _prefs.setString('password',jsonResponse['data']['password']);
       //Đóng dialog khi đổi mật khẩu thành công
-      Navigator.pop(context);
-    }
-  }
-
-  _updateInformation(int id, String fullname, String address) async{
-    String url = baseUrl+donators+"/update/id/"+id.toString();
-    final body = jsonEncode(<String, String>{
-      "fullName": fullname,
-      "address": address,
-    });
-    var jsonResponse;
-    var res = await http.post(url,headers:header,body: body);
-    jsonResponse = json.decode(utf8.decode(res.bodyBytes));
-    //Hiện thông báo theo messenge được trả về từ server
-    Fluttertoast.showToast(
-        msg: jsonResponse['messenger'],
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
-    //Kiem tra API Status - 200 tức là đổi thành công - theo như mô tả từ server.
-    if(res.statusCode == 200){
-      // lưu thông tin mới được cập nhật vào SharedPreferences
-      SharedPreferences _prefs = await SharedPreferences.getInstance();
-      setState(() {
-        _prefs.setString('donator_full_name',jsonResponse['data']['fullName']);
-        _prefs.setString('donator_address',jsonResponse['data']['address']);
-        this.fullname=_prefs.getString('donator_full_name');
-        this.address=_prefs.getString('donator_address');
-      });
-      //Đóng dialog khi cập nhật thành công
       Navigator.pop(context);
     }
   }
@@ -193,7 +167,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                       text: "Xác nhận",
                       press: ()async{
                         SharedPreferences _prefs = await SharedPreferences.getInstance();
-                        _validateAndChangePassword(_prefs.getString('username'),_curPasswordField.text,_newPasswordField.text,_reWritePasswordField.text);
+                        _validateAndChangePassword(_prefs.getString('username'),_prefs.getString('password'),_curPasswordField.text,_newPasswordField.text,_reWritePasswordField.text);
                       },
                     ),
 
@@ -203,6 +177,40 @@ class _PersonalScreenState extends State<PersonalScreen> {
             ),
           );
         });
+  }
+
+  _updateInformation(int id, String fullname, String address) async{
+    String url = baseUrl+donators+"/update/id/"+id.toString();
+    final body = jsonEncode(<String, String>{
+      "fullName": fullname,
+      "address": address,
+    });
+    var jsonResponse;
+    var res = await http.post(url,headers:header,body: body);
+    jsonResponse = json.decode(utf8.decode(res.bodyBytes));
+    //Hiện thông báo theo messenge được trả về từ server
+    Fluttertoast.showToast(
+        msg: jsonResponse['messenger'],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+    //Kiem tra API Status - 200 tức là đổi thành công - theo như mô tả từ server.
+    if(res.statusCode == 200){
+      // lưu thông tin mới được cập nhật vào SharedPreferences
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      setState(() {
+        _prefs.setString('donator_full_name',jsonResponse['data']['fullName']);
+        _prefs.setString('donator_address',jsonResponse['data']['address']);
+        this.fullname=_prefs.getString('donator_full_name');
+        this.address=_prefs.getString('donator_address');
+      });
+      //Đóng dialog khi cập nhật thành công
+      Navigator.pop(context);
+    }
   }
 
   _showChangeInformationDialog(BuildContext context) {

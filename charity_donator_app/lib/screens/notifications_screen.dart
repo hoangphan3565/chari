@@ -29,39 +29,35 @@ class _NotificationsScreenState extends State<NotificationsScreen>{
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.2),
-                    borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(0))),
-                child: 1==1 ?
-                Container(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.only(top: 300.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(height: 8,),
-                        Text("Bạn chưa có thông báo nào!"),
-                        SizedBox(height: 8,),
-                        Container(
-                          height: 0,
-                          margin: EdgeInsets.symmetric(horizontal: 0),
+                        Text(
+                          "Chưa có thông báo nào!",
+                          style: const TextStyle(
+                            fontSize: 16.0,
+                            color: kPrimaryColor,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
                         ),
                       ],
-                    )
-                )
-                    :
-                Container(
-                  child:  CustomScrollView(
-                    slivers: [
-                    ],
-                  ),
-                )
-            ),
-          ),
-        ],
-      ),
+                    ),
+                  );
+                },
+                childCount: 1,
+              ),
+            )
+          ],
+        ),
     );
   }
 }

@@ -51,7 +51,7 @@ class _DonateScreenState extends State<DonateScreen>{
                     ),
                     SizedBox(height: 20),
                     Text(
-                      "Cám ơn bạn",
+                      "Cảm ơn bạn",
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

@@ -22,32 +22,33 @@ class _SignUpScreenState extends State<SignUpScreen>{
   TextEditingController _password1Controller = TextEditingController();
   TextEditingController _password2Controller = TextEditingController();
 
-  _validateAndLogin(String username, String password1,String password2){
-    if(username.length!=10){
+  _validateAndSignup(String username, String password1,String password2){
+    String error_message;
+    if(username.length != 0 && password1.length !=0 && password2.length!=0) {
+      if(username.length==10){
+        if(password1==password2){
+          if(Validate.validatePassword(password1)){
+            _singUp(username, password1, password2);
+          }else{
+          error_message='Mật khẩu mới phải có ít nhất 6 ký tự và gồm chữ và số!';
+        }}else{
+          error_message='Mật khẩu mới không trùng khớp!';
+        }}else{
+        error_message='Số điện thoại không chính xác!';
+      }}else{
+      error_message='Không được trống thông tin nào';
+    }
+    if(error_message.length>0){
       Fluttertoast.showToast(
-          msg: 'Số điện thoại không chính xác',
+          msg: error_message,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.orangeAccent,
           textColor: Colors.white,
           fontSize: 16.0
       );
-      return;
     }
-    if(password1.length < 6 || !Validate.validatePassword(password1)){
-      Fluttertoast.showToast(
-          msg: 'Mật khẩu phải có ít nhất 6 ký tự, chứa ký tự in hoa, số và ký tự đặc biệt!',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-      return;
-    }
-    _singUp(username, password1, password2);
   }
 
   //Hàm xử lý đăng ký bằng API
@@ -68,7 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
+        backgroundColor: jsonResponse['errorCode']== 0 ? Colors.green:Colors.orangeAccent,
         textColor: Colors.white,
         fontSize: 16.0
     );
@@ -109,14 +110,14 @@ class _SignUpScreenState extends State<SignUpScreen>{
               ),
               RoundedPasswordField(
                 hintText: "Nhập mật khẩu",
-                icon: LineAwesomeIcons.lock,
+                icon: LineAwesomeIcons.lock_open,
                 obscureText: true,
                 controller: _password1Controller,
                 onChanged: (value) {},
               ),
               RoundedPasswordField(
                 hintText: "Nhập lại mật khẩu",
-                icon: LineAwesomeIcons.lock_open,
+                icon: LineAwesomeIcons.lock,
                 obscureText: true,
                 controller: _password2Controller,
                 onChanged: (value) {},
@@ -124,7 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
               RoundedButton(
                 text: "Đăng ký",
                 press:(){
-                  _validateAndLogin(_usernameController.text,_password1Controller.text,_password2Controller.text);
+                  _validateAndSignup(_usernameController.text,_password1Controller.text,_password2Controller.text);
                 },
               ),
               SizedBox(height: size.height * 0.03),

@@ -4,7 +4,6 @@ import 'package:charity_donator_app/models/models.dart';
 import 'package:charity_donator_app/screens/notifications_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:convert' show utf8;
@@ -36,12 +35,12 @@ class _AppBarScreenState extends State<AppBarScreen> {
   initState() {
     super.initState();
     _checkLogin();
-    _getProjects();
+    _getDatas();
     _getDonateHistory();
     //Gọi API get dữ liệu để Cập nhật những thay đổi của các bài viết sau một khoảng thời gian
     _getNewDataAfter = Timer.periodic(Duration(seconds: 10), (Timer t) {
       setState(() {
-        _getProjects();
+        _getDatas();
         _getDonateHistory();
       });
     });
@@ -67,7 +66,7 @@ class _AppBarScreenState extends State<AppBarScreen> {
     }
   }
 
-  _getProjects() async{
+  _getDatas() async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String temp = _prefs.getString('donator_favorite_project');
     if(temp!=null){
@@ -92,6 +91,7 @@ class _AppBarScreenState extends State<AppBarScreen> {
       setState(() {
         List<dynamic> list = json.decode(utf8.decode(response.bodyBytes));
         project_types = list.map((model) => ProjectType.fromJson(model)).toList();
+        project_types.insert(0, ProjectType(0, '', 'Tất cả bài viết'));
       });
     });
   }
@@ -136,7 +136,7 @@ class _AppBarScreenState extends State<AppBarScreen> {
           onTap: (index) {
             setState(() {
               if(index == 0 || index == 3){
-                _getProjects();
+                _getDatas();
                 _getDonateHistory();
               }
               _page = index;

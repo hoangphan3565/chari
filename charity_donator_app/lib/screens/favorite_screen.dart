@@ -2,6 +2,7 @@
 import 'package:charity_donator_app/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'dart:convert';
 import 'dart:convert' show utf8;
@@ -123,7 +124,7 @@ class _FavoriteScreenState extends State<FavoriteScreen>{
                         this.donate_money=value;
                       },
                       decoration: InputDecoration(
-                        labelText: "Số tiền: ${MoneyUtility.numberToString(this.donate_money)}",
+                        labelText: "Số tiền*: ${MoneyUtility.numberToString(this.donate_money)}",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.normal,
                           color: Colors.black,
@@ -135,7 +136,7 @@ class _FavoriteScreenState extends State<FavoriteScreen>{
                       controller: _messageControllerField,
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                       ),
                       decoration: InputDecoration(
                         labelText: "Lời nhắn",
@@ -149,24 +150,41 @@ class _FavoriteScreenState extends State<FavoriteScreen>{
                     RoundedButton(
                       text: "Ủng hộ",
                       press: ()async{
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        int did = prefs.getInt('donator_id');
-                        if(did==null){did = -1;}
-                        String url = baseUrl+"/paypal/donatorid/${did}/projectid/${project.prj_id}/donate";
-                        final body = jsonEncode(<String, String>{
-                          "price": _moneyControllerField.text,
-                          "description":_messageControllerField.text
-                        });
-                        var res = await http.post(url,headers:header,body: body);
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context, MaterialPageRoute(
-                            builder: (context)=>DonateScreen(paypalurl: res.body.toString(),project: project, money: _moneyControllerField.text,)
-                        )
-                        );
+                        int lessMoney=project.target_money-project.cur_money;
+                        String message="";
+                        if(_moneyControllerField.text.length != 0 && int.parse(_moneyControllerField.text) > 1000){
+                          if(int.parse(_moneyControllerField.text)<=lessMoney){
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            int donator_id = prefs.getInt('donator_id');
+                            if(donator_id==null){donator_id = -1;}  //nếu chưa đăng nhập
+                            String url = baseUrl+"/paypal/donatorid/${donator_id}/projectid/${project.prj_id}/donate";
+                            final body = jsonEncode(<String, String>{
+                              "price": _moneyControllerField.text,
+                              "description":_messageControllerField.text
+                            });
+                            var res = await http.post(url,headers:header,body: body);
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context, MaterialPageRoute(
+                                builder: (context)=>DonateScreen(paypalurl: res.body.toString(),project: project, money: _moneyControllerField.text,))
+                            );
+                          }else{message='Dự án này chỉ cần ${lessMoney} VNĐ nữa là đủ!';
+                          }}else{
+                          message  = 'Hãy ủng hộ ít nhất 1.000 VNĐ!';
+                        }
+                        if(message.length>0){
+                          Fluttertoast.showToast(
+                              msg: message,
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0
+                          );
+                        }
                       },
                     ),
-
                   ],
                 ),
               ),
@@ -174,6 +192,7 @@ class _FavoriteScreenState extends State<FavoriteScreen>{
           );
         });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -196,59 +215,41 @@ class _FavoriteScreenState extends State<FavoriteScreen>{
           ),
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Container(
-          //   margin: EdgeInsets.fromLTRB(0,35,0,10),
-          //   padding: EdgeInsets.symmetric(horizontal: 15),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Text(
-          //         'Đã quan tâm',
-          //         style: const TextStyle(
-          //           color: kPrimaryColor,
-          //           fontSize: 20.0,
-          //           fontWeight: FontWeight.bold,
-          //           letterSpacing: -1.2,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          Expanded(
-            child:  Container(
-                decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(0))),
-                child: favorite_projects.length == 0 ?
-                Container(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 8,),
-                        Text("Bạn chưa quan tâm bài viết nào!"),
-                        SizedBox(height: 8,),
-                        Container(
-                          height: 0,
-                          margin: EdgeInsets.symmetric(horizontal: 0),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          favorite_projects.length == 0 ?
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                return Container(
+                  margin: const EdgeInsets.only(top: 300.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Bạn chưa quan tâm bài viết nào!",
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          color: kPrimaryColor,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.5,
                         ),
-                      ],
-                    )
-                )
-                    :
-                Container(
-                  child:  CustomScrollView(
-                    slivers:  [
-                        SliverList(delegate: SliverChildBuilderDelegate((context, index)
-                        {return buildPostSection(favorite_projects[index]);},
-                          childCount: favorite_projects.length,
-                        ),
-                        )
-                      ],
+                      ),
+                    ],
                   ),
-                )
+                );
+              },
+              childCount: 1,
             ),
+          )
+              :
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (context, index){
+                    return buildPostSection(favorite_projects[index]);},
+            childCount: favorite_projects.length,
+          ),
           )
         ],
       ),

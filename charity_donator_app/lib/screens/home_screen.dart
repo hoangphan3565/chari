@@ -10,6 +10,7 @@ import 'package:charity_donator_app/utility/utility.dart';
 import 'package:charity_donator_app/widgets/custom_alert_dialog.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
@@ -105,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen>{
                 )
               ],
             ),
+
             _selectedProjectType == 0 ?
             SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -115,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen>{
               ),
             )
                 :
+            (widget.projects.where((i) => i.prt_id==_selectedProjectType).length != 0 ?
             SliverList(
               delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -123,6 +126,33 @@ class _HomeScreenState extends State<HomeScreen>{
                 childCount: widget.projects.where((i) => i.prt_id==_selectedProjectType).length,
               ),
             )
+                :
+            SliverList(
+                delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.only(top: 300.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                           "Chưa có bài viết nào!",
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              color: kPrimaryColor,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                    childCount: 1,
+                ),
+              ))
+
           ],
         )
     );
@@ -210,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen>{
                         this.donate_money=value;
                       },
                       decoration: InputDecoration(
-                        labelText: "Số tiền: ${MoneyUtility.numberToString(this.donate_money)}",
+                        labelText: "Số tiền*: ${MoneyUtility.numberToString(this.donate_money)}",
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.normal,
                           color: Colors.black,
@@ -222,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen>{
                       controller: _messageControllerField,
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                       ),
                       decoration: InputDecoration(
                         labelText: "Lời nhắn",
@@ -236,24 +266,41 @@ class _HomeScreenState extends State<HomeScreen>{
                     RoundedButton(
                       text: "Ủng hộ",
                       press: ()async{
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        int donator_id = prefs.getInt('donator_id');
-                        if(donator_id==null){donator_id = -1;}  //nếu chưa đăng nhập
-                        String url = baseUrl+"/paypal/donatorid/${donator_id}/projectid/${project.prj_id}/donate";
-                        final body = jsonEncode(<String, String>{
-                          "price": _moneyControllerField.text,
-                          "description":_messageControllerField.text
-                        });
-                        var res = await http.post(url,headers:header,body: body);
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context, MaterialPageRoute(
-                            builder: (context)=>DonateScreen(paypalurl: res.body.toString(),project: project, money: _moneyControllerField.text,)
-                        )
-                        );
+                        int lessMoney=project.target_money-project.cur_money;
+                        String message="";
+                        if(_moneyControllerField.text.length != 0 && int.parse(_moneyControllerField.text) > 1000){
+                          if(int.parse(_moneyControllerField.text)<=lessMoney){
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            int donator_id = prefs.getInt('donator_id');
+                            if(donator_id==null){donator_id = -1;}  //nếu chưa đăng nhập
+                            String url = baseUrl+"/paypal/donatorid/${donator_id}/projectid/${project.prj_id}/donate";
+                            final body = jsonEncode(<String, String>{
+                              "price": _moneyControllerField.text,
+                              "description":_messageControllerField.text
+                            });
+                            var res = await http.post(url,headers:header,body: body);
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context, MaterialPageRoute(
+                                builder: (context)=>DonateScreen(paypalurl: res.body.toString(),project: project, money: _moneyControllerField.text,))
+                            );
+                          }else{message='Dự án này chỉ cần ${lessMoney} VNĐ nữa là đủ!';
+                          }}else{
+                          message  = 'Hãy ủng hộ ít nhất 1.000 VNĐ!';
+                        }
+                        if(message.length>0){
+                          Fluttertoast.showToast(
+                              msg: message,
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0
+                          );
+                        }
                       },
                     ),
-
                   ],
                 ),
               ),
