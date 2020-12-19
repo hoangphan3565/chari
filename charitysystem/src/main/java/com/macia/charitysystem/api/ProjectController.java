@@ -26,7 +26,6 @@ public class ProjectController {
 
     @GetMapping()
     public ResponseEntity<?> getAllProject() {
-        System.out.println("Vừa có 1 req lấy danh sách tất cả bài viết");
         return ResponseEntity.ok().body(projectService.findAllProjectDTO());
     }
 

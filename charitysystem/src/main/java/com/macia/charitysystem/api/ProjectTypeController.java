@@ -4,10 +4,7 @@ import com.macia.charitysystem.DTO.ImageDTO;
 import com.macia.charitysystem.model.ProjectType;
 import com.macia.charitysystem.service.ProjectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +19,20 @@ public class ProjectTypeController {
 
     @GetMapping()
     public List<ProjectType> getAllProjectType() {
-        return projectTypeService.findAllProjectType();
+        return projectTypeService.findAll();
     }
+
+    @GetMapping("/{id}")
+    public ProjectType getProjectTypeById(@PathVariable(value = "id") Integer id) {
+        return projectTypeService.findById(id);
+    }
+    @PostMapping()
+    public ProjectType saveProjectType(@RequestBody ProjectType pt) {
+        return projectTypeService.save(pt);
+    }
+    @DeleteMapping("/{id}")
+    public void removeProjectTypeById(@PathVariable(value = "id") Integer id) {
+        projectTypeService.removeById(id);
+    }
+
 }

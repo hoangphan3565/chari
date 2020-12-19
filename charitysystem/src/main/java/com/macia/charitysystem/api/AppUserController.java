@@ -34,18 +34,19 @@ public class AppUserController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> login(@RequestBody AppUser user) throws Exception {
         AppUser appuser = appUserRepository.findByUsername(user.getUsername());
-        if (appuser == null || !appuser.getPassword().equals(user.getPassword())) {
+        if (appuser != null && appuser.getPassword().equals(user.getPassword())){
             JSONObject jo = new JSONObject();
-            jo.put("error code", "1");
+            jo.put("errorCode", 0);
+            jo.put("data", appuser);
+            jo.put("messenger", "Đăng nhập thành công!");
+            return new ResponseEntity<>(jo.toMap(), HttpStatus.OK);
+        }else{
+            JSONObject jo = new JSONObject();
+            jo.put("errorCode", 1);
             jo.put("data", "");
-            jo.put("messenger", "Sai tên đăng nhập hoặc mật khẩu");
+            jo.put("messenger", "Sai SĐT hoặc mật khẩu!");
             return new ResponseEntity<>(jo.toMap(), HttpStatus.ALREADY_REPORTED);
         }
-        JSONObject jo = new JSONObject();
-        jo.put("error code", "0");
-        jo.put("data", appuser);
-        jo.put("messenger", "Đăng nhập thành công");
-        return new ResponseEntity<>(jo.toMap(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -54,16 +55,10 @@ public class AppUserController {
         JSONObject jo = new JSONObject();
         AppUser appuser = appUserRepository.findByUsername(user.getUsername());
         if (appuser != null) {
-            jo.put("error code", "1");
-            jo.put("messenger", "Tên đăng nhập đã tồn tại!");
+            jo.put("errorCode", 1);
+            jo.put("messenger", "Số điện thoại này đã được đăng ký!");
             jo.put("data", "");
             return new ResponseEntity<>(jo.toMap(), HttpStatus.ALREADY_REPORTED);
-        }
-        if (!user.getPassword1().equals(user.getPassword2())) {
-            jo.put("error code", "1");
-            jo.put("messenger", "Mật khẩu không trùng khớp!");
-            jo.put("data", "");
-            return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
         }
 
         final AppUser newuser = new AppUser();
@@ -77,13 +72,13 @@ public class AppUserController {
             newuser.setUsertype(UserType.Collaborator);
             collaboratorService.save(Collaborator.builder().phoneNumber(user.getUsername()).build());
         } else {
-            jo.put("error code", "1");
+            jo.put("errorCode", 1);
             jo.put("data", "");
             jo.put("messenger", "Đăng ký thât bại!");
             return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
         }
         appUserRepository.save(newuser);
-        jo.put("error code", "0");
+        jo.put("errorCode", 0);
         jo.put("data", appuser);
         jo.put("messenger", "Đăng ký thành công!");
         return ResponseEntity.ok(jo.toMap());
@@ -95,51 +90,59 @@ public class AppUserController {
         if(user.getUser_type().equals(UserType.Donator.toString())){
             AppUser appUser = appUserRepository.findByUsername(user.getUsername());
             if(appUser!=null){
-                if(user.getCur_password().equals(appUser.getPassword())){
-                    if(user.getPassword1().equals(user.getPassword2())){
-                        if(!appUser.getPassword().equals(user.getPassword1()))
-                        {
-                            appUser.setPassword(user.getPassword1());
-                            appUserRepository.saveAndFlush(appUser);
-                            jo.put("error code", "0");
-                            jo.put("data", appUser);
-                            jo.put("messenger", "Đổi mật khẩu thành công!");
-                            return new ResponseEntity<>(jo.toMap(), HttpStatus.OK);
-                        }
-                        else{
-                            jo.put("error code", "1");
-                            jo.put("data", "");
-                            jo.put("messenger", "Mật khẩu mới phải khác mật khẩu cũ!");
-                            return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
-                        }
-                    }
-                    else{
-                        jo.put("error code", "1");
-                        jo.put("data", "");
-                        jo.put("messenger", "Mật khẩu mới không trùng khớp!");
-                        return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
-                    }
-                }
-                else{
-                    jo.put("error code", "1");
-                    jo.put("data", "");
-                    jo.put("messenger", "Mật khẩu hiện tại không chính xác!");
-                    return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
-                }
+//                if(user.getCur_password().equals(appUser.getPassword())){
+//                    if(user.getPassword1().equals(user.getPassword2())){
+//                        if(!appUser.getPassword().equals(user.getPassword1()))
+//                        {
+//                            appUser.setPassword(user.getPassword1());
+//                            appUserRepository.saveAndFlush(appUser);
+//                            jo.put("errorCode", "0");
+//                            jo.put("data", appUser);
+//                            jo.put("messenger", "Đổi mật khẩu thành công!");
+//                            return new ResponseEntity<>(jo.toMap(), HttpStatus.OK);
+//                        }
+//                        else{
+//                            jo.put("errorCode", "1");
+//                            jo.put("data", "");
+//                            jo.put("messenger", "Mật khẩu mới phải khác mật khẩu cũ!");
+//                            return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
+//                        }
+//                    }
+//                    else{
+//                        jo.put("errorCode", "1");
+//                        jo.put("data", "");
+//                        jo.put("messenger", "Mật khẩu mới không trùng khớp!");
+//                        return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
+//                    }
+//                }
+//                else{
+//                    jo.put("errorCode", "1");
+//                    jo.put("data", "");
+//                    jo.put("messenger", "Mật khẩu hiện tại không chính xác!");
+//                    return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
+//                }
+                appUser.setPassword(user.getPassword1());
+                appUserRepository.saveAndFlush(appUser);
+                jo.put("errorCode", 0);
+                jo.put("data", appUser);
+                jo.put("messenger", "Đổi mật khẩu thành công!");
+                return new ResponseEntity<>(jo.toMap(), HttpStatus.OK);
             }
-            jo.put("error code", "1");
-            jo.put("data", "");
-            jo.put("messenger", "Can't find user with username: "+user.getUsername()+ " !");
-            return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
+            else{
+                jo.put("errorCode", 1);
+                jo.put("data", "");
+                jo.put("messenger", "Can't find user with username: "+user.getUsername()+ " !");
+                return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
+            }
         }
         else if(user.getUser_type().equals(UserType.Collaborator.toString())) {
-            jo.put("error code", "1");
+            jo.put("errorCode", 1);
             jo.put("data", "");
             jo.put("messenger", "Change password for "+UserType.Collaborator.toString()+" not available!");
             return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);
         }
         else{
-            jo.put("error code", "1");
+            jo.put("errorCode", 1);
             jo.put("data", "");
             jo.put("messenger", "Can't find user type: "+user.getUser_type());
             return new ResponseEntity<>(jo.toMap(), HttpStatus.BAD_REQUEST);

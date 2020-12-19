@@ -1,11 +1,13 @@
 package com.macia.charitysystem.service;
 
+import com.macia.charitysystem.DTO.DonatorDTO;
 import com.macia.charitysystem.model.Donator;
 import com.macia.charitysystem.repository.DonatorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.NoResultException;
+import java.util.List;
 
 @Service
 public class DonatorService {

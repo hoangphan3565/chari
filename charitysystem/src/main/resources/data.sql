@@ -1,16 +1,15 @@
-insert into app_user(username,password,usertype) values('1234','123','Collaborator');
-insert into app_user(username,password,usertype) values('0973465515','@Hoang123','Donator');
-insert into app_user(username,password,usertype) values('4564564564','@Hoang123','Donator');
-insert into app_user(username,password,usertype) values('7897897897','@Hoang123','Donator');
+insert into app_user(username,password,usertype) values('123','123','Collaborator');
+insert into app_user(username,password,usertype) values('0973465515','hoang123','Donator');
+insert into app_user(username,password,usertype) values('4564564564','hoang123','Donator');
+insert into app_user(username,password,usertype) values('7897897897','hoang123','Donator');
 
 
-insert into collaborator(full_name,phone_number,address,certificate) values('Nguyễn Minh Anh','1234','TP Hà Nội','url of certificate');
-insert into donator(dnt_id) values (-1);
+insert into collaborator(full_name,phone_number,address,certificate) values('Nguyễn Minh Anh','123','TP Hà Nội','url of certificate');
+insert into donator(dnt_id,full_name,phone_number,address) values (-1,'Nhà hảo tâm ẩn danh','N/A','N/A');
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Phan Đình Hoàng','0973465515','Quận 1, TP Hà Nội','1 2 10 ','https://st.quantrimang.com/photos/image/2017/04/08/anh-dai-dien-FB-200.jpg');
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Trần Văn Thường','4564564564','Quận 2, TP HCM','1 3 ','https://st.quantrimang.com/photos/image/2017/04/08/anh-dai-dien-FB-200.jpg');
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Trần Văn Quân','7897897897','Quận 3, TP HCM','4 6 ','https://i.pinimg.com/originals/01/48/0f/01480f29ce376005edcbec0b30cf367d.jpg');
 
-insert into project_type(prt_id,project_type_code,project_type_name) values(0,'G0','Tất cả bài viết');
 insert into project_type(project_type_code,project_type_name) values('G1','Dự án cộng đồng kinh phí thấp');
 insert into project_type(project_type_code,project_type_name) values('G2','Hoàn cảnh khó khăn cần giúp đỡ hằng tháng');
 insert into project_type(project_type_code,project_type_name) values('G3','Nấu cơm từ thiện');
@@ -20,8 +19,7 @@ insert into project_type(project_type_code,project_type_name) values('G4','Hoàn
 insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Yên','Bình Dương','4089566413','41347242264');
 insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Thoái','Quảng Bình','4083743757','3324454755762');
 insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Nhược','Long An','4088473876','479619785662983');
-insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Nhược','Long An','4088473876','479619785662983');
-insert into supported_people(full_name,address,phone_number,bank_account) values('Nguyễn Thị Nhược','Long An','4088473876','479619785662983');
+
 
 
 insert into project(project_code,project_name,brief_description,description,start_date,end_date,target_money,image_url,video_url,prt_id,stp_id,clb_id)
@@ -232,6 +230,7 @@ insert into donate_activity(dnt_id,prj_id) values(1,2);
 insert into donate_details(donate_date,money,dna_id) values('2020-11-05',5000000,2);
 insert into donate_details(donate_date,money,dna_id) values('2020-11-07',5000000,2);
 insert into donate_details(donate_date,money,dna_id) values('2020-11-09',5000000,2);
+insert into donate_details(donate_date,money,dna_id) values('2020-11-20',60300000,2);
 insert into donate_activity(dnt_id,prj_id) values(1,3);
 insert into donate_details(donate_date,money,dna_id) values('2020-11-05',5000000,3);
 insert into donate_details(donate_date,money,dna_id) values('2020-11-07',6000000,3);
