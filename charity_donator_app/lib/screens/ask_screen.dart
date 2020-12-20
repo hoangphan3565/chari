@@ -1,7 +1,9 @@
 
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/screens/screens.dart';
+import 'package:charity_donator_app/services/services.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AskScreen extends StatelessWidget {
@@ -43,6 +45,15 @@ class AskScreen extends StatelessWidget {
                                     fontsize: 16,
                                     press: (){
                                       Navigator.push(context,MaterialPageRoute(builder: (BuildContext ctx) => SignUpScreen()));
+                                    },
+                                  ),
+                                  Text("Hoặc có thể đóng góp ý kiến tại đây"),
+                                  RoundedButton(
+                                    text: "Đóng góp ý kiến",
+                                    fontsize: 16,
+                                    press: (){
+                                      FeedBackService.showSendFeedbackDialog(context);
+                                      //Navigator.pop(context);
                                     },
                                   ),
                                 ],

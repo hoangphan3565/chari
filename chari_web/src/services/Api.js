@@ -2,10 +2,12 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 
 const url = {
-    baseUrl: "https://www.saigontech.edu.vn/restful-api",
-    majors: "/majors",
+    //baseUrl: "http://192.168.137.1:8080/api",
+    baseUrl: "http://192.168.43.139:8080/api",
+    projectTypes: "/projecttypes",
     students: "/students",
-    instructors: "/instructors",
+    donators: "/donators",
+    supportedpeoples: "/supportedpeoples",
     login: "/login"
 };
 
@@ -14,14 +16,14 @@ const instance = axios.create({
     headers: {"Content-Type":"application/json","Accept": "application/json"},
 });
 
-instance.interceptors.request.use(request=>{
-    const loginInfoStr = Cookies.get("loginInfo");
-    if(loginInfoStr){
-        const loginInfo = JSON.parse(loginInfoStr);
-        request.headers.Authorization = `Bearer ${loginInfo.accessToken}`
-    }
-    return request;
-});
+// instance.interceptors.request.use(request=>{
+//     const loginInfoStr = Cookies.get("loginInfo");
+//     if(loginInfoStr){
+//         const loginInfo = JSON.parse(loginInfoStr);
+//         request.headers.Authorization = `Bearer ${loginInfo.accessToken}`
+//     }
+//     return request;
+// });
 
 instance.interceptors.response.use(response=>{
     return response;

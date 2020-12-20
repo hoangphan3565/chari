@@ -1,16 +1,16 @@
 import Home from './pages/home';
-import Students from './pages/student';
-import Major from './pages/major';
+import ProjectType from './pages/project_type';
 import Login from './pages/login';
-import Instructor from './pages/instructor';
+import Donator from './pages/donator';
+import SupportedPeople from './pages/supported_people';
 
 
 const routes = [
     {path:"/", exact: true,name: "Home",component:Home},
     {path:"/home", exact: true,name: "Home",component:Home},
-    {path:"/major", exact: true,name: "Major",component:Major},
-    {path:"/instructor", exact: true,name: "Instructor",component:Instructor},
-    {path:"/student", exact: true,name: "Student",component:Students},
+    {path:"/projecttype", exact: true,name: "ProjectType",component:ProjectType},
+    {path:"/donator", exact: true,name: "Donator",component:Donator},
+    {path:"/supportedpeople", exact: true,name: "SupportedPeople",component:SupportedPeople},
     {path:"/login", exact: true,name: "Login",component:Login}
 
 ];

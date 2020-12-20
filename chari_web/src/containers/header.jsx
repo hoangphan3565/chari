@@ -1,13 +1,27 @@
 import React, { Component } from "react";
+import Cookies from 'js-cookie';
 import { Link } from "react-router-dom";
+
+
+
 class Header extends Component {
+  state = {
+    nameuser: "",
+  };
+  componentDidMount() {
+    const loginInfoStr = Cookies.get("loginInfo");
+    if(loginInfoStr){
+      this.setState({ nameuser: JSON.parse(loginInfoStr).usertype });
+    }
+  }
+
   render() {
     return (
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-info">
           <div className="container">
             <Link className="navbar-brand" to="/">
-              Student Management
+              Chari
             </Link>
             <button
               className="navbar-toggler"
@@ -26,28 +40,35 @@ class Header extends Component {
                 <li className="nav-item active">
                   <span className="nav-link hand" href="#">
                     <Link className="nav-link" to="/">
-                      Home
+                      Trang chính
                     </Link>
                   </span>
                 </li>
                 <li className="nav-item">
                   <span className="nav-link hand" href="#">
-                    <Link className="nav-link" to="/major">
-                      Major
+                    <Link className="nav-link" to="/projecttype">
+                      Loại dự án
                     </Link>
                   </span>
                 </li>
                 <li className="nav-item">
                   <span className="nav-link hand" href="#">
-                    <Link className="nav-link" to="/instructor">
-                      Instructor
+                    <Link className="nav-link" to="/project">
+                      Dự án
                     </Link>
                   </span>
                 </li>
                 <li className="nav-item">
                   <span className="nav-link hand" href="#">
-                    <Link className="nav-link" to="/student">
-                      Student
+                    <Link className="nav-link" to="/donator">
+                      Nhà hảo tâm
+                    </Link>
+                  </span>
+                </li>
+                <li className="nav-item">
+                  <span className="nav-link hand" href="#">
+                    <Link className="nav-link" to="/supportedpeople">
+                      Cá nhân cần được hỗ trợ
                     </Link>
                   </span>
                 </li>
@@ -55,7 +76,7 @@ class Header extends Component {
               <ul className="navbar-nav">
                 <li className="nav-item">
                   <span className="nav-link hand" href="#">
-                    Wellcome ...{" "}
+                    Xin chào {`${this.state.nameuser}`}
                   </span>
                 </li>
                 <li className="nav-item">

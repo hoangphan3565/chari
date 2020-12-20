@@ -30,11 +30,6 @@ public class ProjectController {
     }
 
 
-    @GetMapping("/type/{id}")
-    public ResponseEntity<?> getProjectByTypeId(@PathVariable(value = "id") Integer id) {
-        return ResponseEntity.ok().body(projectService.findAllProjectDTOByType(id));
-    }
-
 
     @PostMapping("/create/type/{prtid}/peo/{sptid}")
     public ResponseEntity<?> createEmployeeWithDeptAndPostID(

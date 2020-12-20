@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import Dialog from "react-bootstrap-dialog";
-import MajorService from "../services/MajorService";
+import ProjectTypeService from "../services/ProjectTypeService";
 
-class Major extends Component {
+class ProjectType extends Component {
   state = {
-    majors: [],
-    major: {},
+    projecttypes: [],
+    projecttype: {},
     modalShow: false,
     modalTitle: "",
   };
@@ -16,8 +16,8 @@ class Major extends Component {
   }
 
   loadData = () => {
-    MajorService.list().then((res) => {
-      this.setState({ majors: res.data.data });
+    ProjectTypeService.list().then((res) => {
+      this.setState({ projecttypes: res.data });
     });
   };
 
@@ -28,13 +28,13 @@ class Major extends Component {
   showModal = (id) => {
     if (id === 0) {
       //add
-      this.setState({ major: {} });
-      this.setState({ modalTitle: "New Major" });
+      this.setState({ projecttype: {} });
+      this.setState({ modalTitle: "Thêm mới một Loại dự án" });
     } else if (id > 0) {
       //update
-      this.setState({ modalTitle: "Edit Major" });
-      MajorService.get(id).then((res) => {
-        this.setState({ major: res.data.data });
+      this.setState({ modalTitle: "Chỉnh sửa loại dự án" });
+      ProjectTypeService.get(id).then((res) => {
+        this.setState({ projecttype: res.data });
         this.setState({ modalShow: true });
       });
     }
@@ -43,22 +43,22 @@ class Major extends Component {
 
   inputOnChange = (event) => {
     const { name, value } = event.target; // dùng destructuring để rã thuộc tính name và value của event.target ra name và value
-    const newMajor = { ...this.state.major, [name]: value };
-    this.setState({ major: newMajor });
+    const newprojecttype = { ...this.state.projecttype, [name]: value };
+    this.setState({ projecttype: newprojecttype });
   };
 
   save = () => {
-    if (this.state.major.id > 0) {
-      MajorService.update(this.state.major.id, this.state.major).then((res) => {
+    if (this.state.projecttype.id > 0) {
+      ProjectTypeService.update(this.state.projecttype.id, this.state.projecttype).then((res) => {
         if (res.data.errorCode > 0) {
-          this.setState({ message: res.data.message });
+          this.setState({ messenger: res.data.messenger });
         } else {
           this.setState({ modalShow: false });
           this.loadData();
         }
       });
     } else {
-      MajorService.add(this.state.major).then((res) => {
+      ProjectTypeService.add(this.state.projecttype).then((res) => {
         this.setState({ modalShow: false });
         this.loadData();
       });
@@ -67,14 +67,14 @@ class Major extends Component {
 
   showConfirm = (id) => {
     this.dialog.show({
-      title: "Confirmation",
-      body: `Are you sure you want to delete this Major ?`,
+      title: "Cảnh báo",
+      body: `Bạn có chắc chắn sẽ xóa Loại dự án này không?`,
       actions: [
-        Dialog.Action("No", () => {}, "btn-primary"),
+        Dialog.Action("Không", () => {}, "btn-primary"),
         Dialog.Action(
-          "Yes",
+          "Có",
           () => {
-            MajorService.delete(id).then((res) => {
+            ProjectTypeService.delete(id).then((res) => {
               this.loadData();
             });
           },
@@ -97,7 +97,7 @@ class Major extends Component {
               <div className="row">
                 <div className="col">
                   <h3 className="card-title">
-                    Major <small className="text-muted">list </small>{" "}
+                    <small className="text-muted"> danh sách </small>{" "} Loại dự án 
                   </h3>
                 </div>
                 <div className="col-auto">
@@ -107,7 +107,7 @@ class Major extends Component {
                     onClick={() => this.showModal(0)}
                   >
                     <i className="fas fa-plus"></i>
-                    <a> Add</a>
+                    <a> Thêm</a>
                   </button>
                 </div>
               </div>
@@ -118,21 +118,21 @@ class Major extends Component {
                   <thead className="bg-info text-light">
                     <tr className="text-center">
                       <th>#</th>
-                      <th>Name</th>
+                      <th>Tên loại dự án</th>
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.majors.map((major, idx) => {
+                    {this.state.projecttypes.map((projecttype, idx) => {
                       return (
-                        <tr className="text-center" key={major.id}>
+                        <tr className="text-center" key={projecttype.prt_ID}>
                           <td>{idx + 1}</td>
-                          <td>{major.name}</td>
+                          <td>{projecttype.projectTypeName}</td>
                           <td>
                             <span
                               className="hand"
                               href="#"
-                              onClick={() => this.showModal(major.id)}
+                              onClick={() => this.showModal(projecttype.prt_ID)}
                             >
                               <i className="fas fa-edit text-info mr-2"></i> 
                             </span>
@@ -140,7 +140,7 @@ class Major extends Component {
                               href="#"
                               onClick={(e) => {
                                 e.preventDefault();
-                                this.showConfirm(major.id);
+                                this.showConfirm(projecttype.prt_ID);
                               }}
                             >
                               <i className="fas fa-trash-alt text-danger"></i>
@@ -168,17 +168,17 @@ class Major extends Component {
           </Modal.Header>
           <Modal.Body>
             <Form>
-              <Form.Group as={Row} controlId="formHorizontalMajor">
+              <Form.Group as={Row} controlId="formHorizontalprojecttype">
                 <Form.Label column sm={2}>
-                  Name
+                  Tên
                 </Form.Label>
                 <Col sm={10}>
                   <Form.Control
                     type="text"
-                    name="name"
+                    name="projectTypeName"
                     onChange={this.inputOnChange}
-                    value={this.state.major.name || ""}
-                    placeholder="Enter Major name"
+                    value={this.state.projecttype.projectTypeName || ""}
+                    placeholder="Nhập tên của Loại dự án"
                   />
                 </Col>
               </Form.Group>
@@ -186,10 +186,10 @@ class Major extends Component {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={this.closeModal}>
-              Close
+              Đóng
             </Button>
             <Button variant="primary" onClick={this.save}>
-              Save
+              Lưu
             </Button>
           </Modal.Footer>
         </Modal>
@@ -202,4 +202,4 @@ class Major extends Component {
     );
   }
 }
-export default Major;
+export default ProjectType;

@@ -13,12 +13,18 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Transactions {
+public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer TRS_ID;
+    private Integer FEB_ID;
 
-    @ManyToOne
-    @JoinColumn(name = "dnt_id")
-    private Donator donator;
+    @Column(length = 100)
+    private String title;
+
+    @Column(length = 500)
+    private String description;
+
+    @Column(length = 20)
+    private String contributor;
+
 }

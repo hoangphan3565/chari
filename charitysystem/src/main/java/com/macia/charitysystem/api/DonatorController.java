@@ -23,6 +23,7 @@ public class DonatorController {
     public ResponseEntity<?> getAllDonator() {
         return ResponseEntity.ok().body(donatorRepo.findAll());
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getDonatorById(@PathVariable(value = "id") Integer id) {
         return ResponseEntity.ok().body(donatorService.findById(id));

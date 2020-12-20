@@ -81,7 +81,7 @@ function registerValidSW(swUrl, config) {
             } else {
               // At this point, everything has been precached.
               // It's the perfect time to display a
-              // "Content is cached for offline use." message.
+              // "Content is cached for offline use." messenger.
               console.log('Content is cached for offline use.');
 
               // Execute callback
@@ -135,7 +135,7 @@ export function unregister() {
         registration.unregister();
       })
       .catch(error => {
-        console.error(error.message);
+        console.error(error.messenger);
       });
   }
 }

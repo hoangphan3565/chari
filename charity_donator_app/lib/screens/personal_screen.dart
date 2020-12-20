@@ -7,6 +7,7 @@ import 'package:charity_donator_app/models/models.dart';
 import 'package:charity_donator_app/screens/screens.dart';
 import 'package:charity_donator_app/utility/utility.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';
+import 'package:charity_donator_app/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -269,6 +270,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
           );
         });
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -329,7 +331,9 @@ class _PersonalScreenState extends State<PersonalScreen> {
                     RoundedButton(
                       text: 'Đóng góp ý kiến',
                       fontsize: 17,
-                      press: ()=>{print('Đóng góp ý kiến')},
+                      press: ()=>{
+                        FeedBackService.showSendFeedbackDialog(context)
+                      },
                     ),
                     RoundedButton(
                       text: 'Cập nhật thông tin',

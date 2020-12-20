@@ -158,7 +158,7 @@ insert into project(project_code,project_name,brief_description,description,star
 values('G300001','Ủng hộ 400 phần cơm cho bệnh nhân bệnh viên 115 quận 10',
 'Anh Hùng là đầu bếp có tâm, từng bỏ tiền túi để nấu 100 phần cơm cho bệnh nhân khó khăn ở quận 10',
 'Làng An Phú 10 có nhiều sông ngòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông ngòi cần xây cầu cho học sinh đi học hằng ngày. Làng An Phú 1 có nhiều sông ngòi cần xây cầu cho học sinh đi học hằng ngày',
-'2020-11-01','2021-01-01',8000000,
+'2020-11-01','2021-01-01',9000000,
 'https://hieuvetraitim.com/attachments/hoan-canh-gioi-thieu-jpg.1782/',
 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',3,1,1);
 
@@ -263,4 +263,8 @@ insert into donate_activity(dnt_id,prj_id) values(2,10);
 insert into donate_details(donate_date,money,dna_id) values('2020-11-05',3000000,10);
 insert into donate_details(donate_date,money,dna_id) values('2020-11-12',3000000,10);
 insert into donate_details(donate_date,money,dna_id) values('2020-11-08',3000000,10);
+
+
+
+
 

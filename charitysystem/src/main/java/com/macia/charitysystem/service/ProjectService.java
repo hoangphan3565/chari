@@ -28,14 +28,6 @@ public class ProjectService {
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<ProjectDTO> findAllProjectDTOByType(Integer prtid) {
-        StoredProcedureQuery query = this.em.createNamedStoredProcedureQuery("named_getProjectDTOListByType");
-        query.setParameter("prtid", prtid);
-        query.execute();
-        return query.getResultList();
-    }
-
     public Project findProjectById(Integer id) {
         try {
             TypedQuery<Project> query = em.createNamedQuery("named.project.findById", Project.class);
