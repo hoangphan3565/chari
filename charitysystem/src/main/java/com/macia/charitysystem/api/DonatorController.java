@@ -42,14 +42,14 @@ public class DonatorController {
         return ResponseEntity.ok().body(donatorService.findByPhone(phone));
     }
 
-    @PostMapping("/addfavorite/project/{prjid}/donator/{dntid}")
+    @PostMapping("/add_favorite/project/{prjid}/donator_id/{dntid}")
     public ResponseEntity<?> addProjectToFavoriteList(@PathVariable(value = "prjid") Integer prtid,
                                                       @PathVariable(value = "dntid") Integer dntid) {
         donatorService.addProjectToFavoriteList(prtid, dntid);
         return ResponseEntity.ok(donatorService.findById(dntid));
     }
 
-    @PostMapping("/removefavorite/project/{prjid}/donator/{dntid}")
+    @PostMapping("/remove_favorite/project/{prjid}/donator_id/{dntid}")
     public ResponseEntity<?> removeProjectFromFavoriteList(@PathVariable(value = "prjid") Integer prtid,
                                                            @PathVariable(value = "dntid") Integer dntid) {
         donatorService.removeProjectFromFavoriteList(prtid, dntid);

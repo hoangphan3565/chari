@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/donatedetails")
+@RequestMapping("/api/donate_details")
 public class DonateDetailsController {
     @Autowired
     DonateDetailsService donateDetailsService;
 
-    @GetMapping("donatorid/{dntid}")
+    @GetMapping("donator_id/{dntid}")
     public ResponseEntity<?> getDonateDetailsOfDonatorByDonatorId(@PathVariable(value = "dntid") Integer id) {
         return ResponseEntity.ok().body(donateDetailsService.findDonateDetailsByDonatorId(id));
     }

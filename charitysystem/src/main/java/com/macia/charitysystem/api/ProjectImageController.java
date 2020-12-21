@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/projectimages")
+@RequestMapping("/api/project_images")
 public class ProjectImageController {
     @Autowired
     private ProjectImagesService projectImagesService;
@@ -26,11 +26,6 @@ public class ProjectImageController {
         return list;
     }
 
-
-    @GetMapping("/{id}")
-    public String getProjectImagesById(@PathVariable(value = "id") Integer id) {
-        return projectImagesService.findProjectImagesById(id).getImageUrl();
-    }
 
     @GetMapping("/project/{id}")
     public List<String> getProjectByTypeId(@PathVariable(value = "id") Integer id) {

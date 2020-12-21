@@ -51,7 +51,7 @@ public class PaypalController {
     }
 
     @Transactional
-    @PostMapping("/donatorid/{did}/projectid/{pid}/donate")
+    @PostMapping("/donator_id/{did}/project_id/{pid}/donate")
     public String payment(@PathVariable(value = "did") Integer donator_id,
                           @PathVariable(value = "pid") Integer project_id,
                           @RequestBody Order order) {
@@ -68,7 +68,7 @@ public class PaypalController {
                     order.getIntent(),
                     order.getDescription(),
                     "http://" + server_address + ":8080/api/paypal/cancel",
-                    "http://" + server_address + ":8080/api/paypal/success/donatorid/" + donator_id + "/projectid/" + project_id + "/money/" + price);
+                    "http://" + server_address + ":8080/api/paypal/success/donator_id/" + donator_id + "/project_id/" + project_id + "/money/" + price);
             for (Links link : payment.getLinks()) {
                 if (link.getRel().equals("approval_url")) {
                     return link.getHref();
@@ -86,7 +86,7 @@ public class PaypalController {
     }
 
     @Transactional
-    @GetMapping("/success/donatorid/{did}/projectid/{pid}/money/{money}")
+    @GetMapping("/success/donator_id/{did}/project_id/{pid}/money/{money}")
     public String successPay(
             @PathVariable(value = "did") Integer donator_id,
             @PathVariable(value = "pid") Integer project_id,

@@ -88,12 +88,12 @@ class DonateService{
                       press: ()async{
                         int lessMoney=project.target_money-project.cur_money;
                         String message="";
-                        if(_moneyControllerField.text.length != 0 && int.parse(_moneyControllerField.text) > 1000){
+                        if(_moneyControllerField.text.length != 0 && int.parse(_moneyControllerField.text) >= 1000){
                           if(int.parse(_moneyControllerField.text)<=lessMoney){
                             SharedPreferences prefs = await SharedPreferences.getInstance();
                             int donator_id = prefs.getInt('donator_id');
-                            if(donator_id==null){donator_id = -1;}  //nếu chưa đăng nhập
-                            String url = baseUrl+"/paypal/donatorid/${donator_id}/projectid/${project.prj_id}/donate";
+                            if(donator_id==null){donator_id = -1;}  //nếu chưa đăng nhập***** Vấn đề là lỡ có nhiều lượt quyên góp ko đăng nhập thì sao ******
+                            String url = baseUrl+"/paypal/donator_id/${donator_id}/project_id/${project.prj_id}/donate";
                             final body = jsonEncode(<String, String>{
                               "price": _moneyControllerField.text,
                               "description":_messageControllerField.text

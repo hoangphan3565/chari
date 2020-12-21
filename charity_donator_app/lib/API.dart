@@ -8,10 +8,10 @@ const baseUrl = "http://192.168.137.1:8080/api";
 const login = "/login";
 const register = "/register";
 const projects = "/projects";
-const projectimages = "/projectimages/project/";
+const projectimages = "/project_images/project/";
 const donators = "/donators";
-const donatedetails = "/donatedetails";
-const projecttypes = "/projecttypes";
+const donatedetails = "/donate_details";
+const projecttypes = "/project_types";
 
 const header = {'Content-Type': 'application/json; charset=UTF-8',};
 
@@ -26,7 +26,7 @@ class API {
     return http.get(url);
   }
   static Future getDonateDetailsListByDonatorId(int donator_id) {
-    var url = baseUrl + donatedetails+'/donatorid/'+donator_id.toString();
+    var url = baseUrl + donatedetails+'/donator_id/'+donator_id.toString();
     return http.get(url);
   }
 
@@ -36,12 +36,12 @@ class API {
   }
 
   static Future postAddProjectToFavorite(int projectid,int donatorid) {
-    var url = baseUrl + donators + "/addfavorite/project/"+projectid.toString()+"/donator/"+donatorid.toString();
+    var url = baseUrl + donators + "/add_favorite/project/"+projectid.toString()+"/donator_id/"+donatorid.toString();
     return http.post(url,headers:header);
   }
 
   static Future postRemoveProjectFromFavorite(int projectid,int donatorid) {
-    var url = baseUrl + donators + "/removefavorite/project/"+projectid.toString()+"/donator/"+donatorid.toString();
+    var url = baseUrl + donators + "/remove_favorite/project/"+projectid.toString()+"/donator_id/"+donatorid.toString();
     return http.post(url,headers:header);
   }
 }
