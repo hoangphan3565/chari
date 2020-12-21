@@ -1,28 +1,32 @@
 --Lấy toàn bộ project theo kiểu DTO - đã được xử lý dữ liệu để đưa thẳng lên frontend
-create function get_projects_dto()
-    returns TABLE(prj_id integer, project_code character varying, project_name character varying, brief_description character varying, description character varying, image_url character varying, video_url character varying, target_money integer, cur_money integer, num_of_donations integer, remaining_term integer, prt_id integer, project_type_name character varying, status text)
-    language plpgsql
-as
-$$
+CREATE OR REPLACE FUNCTION public.get_projects_dto(
+	)
+    RETURNS TABLE(prj_id integer, project_code character varying, project_name character varying, brief_description character varying, description character varying, image_url character varying, video_url character varying, target_money integer, cur_money integer, num_of_donations integer, remaining_term integer, prt_id integer, project_type_name character varying, status text)
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE
+    ROWS 1000
+
+AS $BODY$
 begin
-	return query 
+	return query
 		select 	pr.prj_id, pr.project_code, pr.project_name,pr.brief_description,
-				pr.description,pr.image_url,pr.video_url,pr.target_money, 
+				pr.description,pr.image_url,pr.video_url,pr.target_money,
 				sum(dd.money)::integer as cur_money,count(dd.dnd_id)::integer as num_of_donations,
 				(pr.end_date-DATE(now())) as remaining_term,pt.prt_id,pt.project_type_name,
-				case 
+				case
 					when pr.end_date-DATE(now()) > 0 and sum(dd.money)::integer < pr.target_money then 'activating'
 					when pr.end_date-DATE(now()) > 0 and sum(dd.money)::integer >= pr.target_money  then 'reached'
-					when pr.end_date-DATE(now()) <= 0 then 'overdue'	
+					when pr.end_date-DATE(now()) <= 0 then 'overdue'
 				end as status
 		from project pr, donate_activity da, donate_details dd,project_type pt
 		where pr.prj_id=da.prj_id and da.dna_id=dd.dna_id and pr.prt_id=pt.prt_id
 		group by pr.prj_id,pt.prt_id,pt.project_type_name,pr.start_date
         order by pr.start_date desc ;
 end;
-$$;
+$BODY$;
 
-alter function get_projects_dto() owner to postgres;
 
 --Lấy project dto theo project type id
 create function get_projects_dto_by_type(_prt_id integer)

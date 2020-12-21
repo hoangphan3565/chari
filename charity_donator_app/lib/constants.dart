@@ -6,8 +6,6 @@ const kPrimaryColor =  Color(0xFF66BB6A);
 const kPrimaryLightColor = Color(0xFFE8F5E9);
 const kSpacingUnit = 10;
 
-final oCcy = new NumberFormat("#.##", "vn_VND");
-
 
 final kTitleTextStyle = TextStyle(
   fontSize: kSpacingUnit.toDouble() * 1.7,

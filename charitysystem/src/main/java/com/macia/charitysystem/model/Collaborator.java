@@ -19,7 +19,7 @@ public class Collaborator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer CLB_ID;
 
-    @Column(length = 200)
+    @Column(length = 100)
     private String fullName;
 
     @Column(length = 200)

@@ -7,24 +7,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AppUser implements Serializable {
+public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true)
+    @Column(unique = true,length = 10)
     private String username;
 
-    @Column(length = 200)
+    @Column(length = 50)
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private UserType usertype;
 }
