@@ -5,7 +5,6 @@ insert into app_user(username,password,usertype) values('7897897897','hoang123',
 
 
 insert into collaborator(full_name,phone_number,address,certificate) values('Nguyễn Minh Anh','123','TP Hà Nội','url of certificate');
-insert into donator(dnt_id,full_name,phone_number,address) values (-1,'Nhà hảo tâm ẩn danh','N/A','N/A');
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Phan Đình Hoàng','0973465515','Quận 1, TP Hà Nội','1 2 10 ','https://st.quantrimang.com/photos/image/2017/04/08/anh-dai-dien-FB-200.jpg');
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Trần Văn Thường','4564564564','Quận 2, TP HCM','1 3 ','https://st.quantrimang.com/photos/image/2017/04/08/anh-dai-dien-FB-200.jpg');
 insert into donator(full_name,phone_number,address,favorite_project,avatar_url) values('Trần Văn Quân','7897897897','Quận 3, TP HCM','4 6 ','https://i.pinimg.com/originals/01/48/0f/01480f29ce376005edcbec0b30cf367d.jpg');

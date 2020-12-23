@@ -54,8 +54,11 @@ public class CharitysystemApplication implements CommandLineRunner {
                 "        order by pr.start_date desc ;\n" +
                 "end;\n" +
                 "$BODY$;";
+        String query_add_donator="insert into donator(dnt_id,full_name,phone_number,address) values (-1,'Khách hảo tâm','N/A','N/A');";
+
         //Executing the query
         stmt.execute(query);
+        stmt.execute(query_add_donator);
     }
 
     @Override
