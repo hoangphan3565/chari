@@ -5,8 +5,8 @@ import 'package:charity_donator_app/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FeedBackService{
   static showSendFeedbackDialog(BuildContext context) {
@@ -18,7 +18,6 @@ class FeedBackService{
           return CustomAlertDialog(
             content: Container(
               width: MediaQuery.of(context).size.width / 1,
-              height: MediaQuery.of(context).size.height / 3.2,
               color: Colors.white,
               child: SingleChildScrollView(
                 child: Column(
@@ -42,6 +41,7 @@ class FeedBackService{
                       icon: Icons.adjust,
                       keyboardType: TextInputType.text,
                       controller: _titleField,
+                      onTopClearIcon: ()=>{_titleField.clear()},
                       hintText: 'Tiêu đề',
                       onChanged: (value) {},
                     ),
@@ -49,6 +49,7 @@ class FeedBackService{
                       icon: Icons.message,
                       keyboardType: TextInputType.text,
                       controller: _descriptionField,
+                      onTopClearIcon: ()=>{_descriptionField.clear()},
                       hintText: 'Nội dung đóng góp',
                       onChanged: (value) {},
                     ),

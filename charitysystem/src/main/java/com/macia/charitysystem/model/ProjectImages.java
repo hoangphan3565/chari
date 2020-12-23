@@ -15,10 +15,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @NamedQueries({
-        @NamedQuery(name = "named.projectImages.findAll",
-                query = "SELECT NEW com.macia.charitysystem.DTO.ImageDTO(p.imageUrl) FROM ProjectImages p"),
-        @NamedQuery(name = "named.projectImages.findById",
-                query = "SELECT NEW com.macia.charitysystem.DTO.ImageDTO(p.imageUrl) FROM ProjectImages p where p.PRI_ID =:id"),
         @NamedQuery(name = "named.projectImages.findByProjectId",
                 query = "SELECT NEW com.macia.charitysystem.DTO.ImageDTO(p.imageUrl) FROM ProjectImages p where p.project.PRJ_ID =:id"),
 })

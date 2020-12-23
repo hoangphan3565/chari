@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DonateDetailsDTO {
     private Double money;
     private LocalDateTime donate_date;

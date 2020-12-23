@@ -1,15 +1,11 @@
 
-import 'dart:io';
 
-import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/models/models.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class  DonateScreen extends StatefulWidget{
   final String paypalurl;
@@ -35,7 +31,6 @@ class _DonateScreenState extends State<DonateScreen>{
           return CustomAlertDialog(
             content: Container(
               width: MediaQuery.of(context).size.width / 1,
-              height: MediaQuery.of(context).size.height / 1.8,
               color: Colors.white,
               child: SingleChildScrollView(
                 child: Column(
@@ -81,6 +76,61 @@ class _DonateScreenState extends State<DonateScreen>{
           );
         });
   }
+
+  _showDonateFailDialog(BuildContext context,Project project) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomAlertDialog(
+            content: Container(
+              width: MediaQuery.of(context).size.width / 1,
+              color: Colors.white,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: MediaQuery.of(context).size.width - 200,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(project.image_url),
+                          )),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      "Vừa có lỗi xảy ra",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    Text("Hiện tại bạn chưa thể ủng hộ cho dự án: "+ project.project_name+". Tất cả số tiền giao dịch sẽ được bảo toàn trong tài khoảng của ban!"),
+                    SizedBox(height: 20),
+                    Text(
+                      "Chúng tôi xin thành thực xin lỗi vì sự cố này",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    SizedBox(height: 20),
+                    RoundedButton(
+                      text: "Xác nhận",
+                      press: ()async{
+                        Navigator.pop(context);
+                      },
+                    ),
+
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {

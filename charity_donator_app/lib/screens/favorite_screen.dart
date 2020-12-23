@@ -1,23 +1,16 @@
 
+import 'dart:convert';
+
+import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/constants.dart';
+import 'package:charity_donator_app/models/models.dart';
+import 'package:charity_donator_app/screens/screens.dart';
 import 'package:charity_donator_app/services/donate_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
-import 'dart:convert';
-import 'dart:convert' show utf8;
-import 'package:http/http.dart' as http;
-
-import 'package:charity_donator_app/API.dart';
-import 'package:charity_donator_app/models/models.dart';
-import 'package:charity_donator_app/screens/screens.dart';
-import 'package:charity_donator_app/utility/utility.dart';
-import 'package:charity_donator_app/widgets/widgets.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_money_formatter/flutter_money_formatter.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FavoriteScreen extends StatefulWidget {
   final List<Project> projects;
@@ -67,8 +60,8 @@ class _FavoriteScreenState extends State<FavoriteScreen>{
 
   _removeHeart(Project project)async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    int donatorid = _prefs.get("donator_id");
-    API.postRemoveProjectFromFavorite(project.prj_id, donatorid).then((response) {
+    int project_id = _prefs.get("donator_id");
+    API.postRemoveProjectFromFavorite(project.prj_id, project_id).then((response) {
       setState(() {
         _prefs.setString('donator_favorite_project',json.decode(response.body)['favoriteProject']);
       });

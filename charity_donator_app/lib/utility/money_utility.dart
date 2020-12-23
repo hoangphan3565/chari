@@ -32,7 +32,7 @@ class MoneyUtility{
     if(sReturn.length > 1){
       sReturn = sReturn.substring(0,1).toUpperCase() + sReturn.substring(1);
     }
-    sReturn = sReturn + "đồng";
+    //sReturn = sReturn + "đồng";
 
     // xu ly lan cuoi voi 220 000 tỷ 000 000 000 000 000 HUTTV ADDED 3 OCT
     if(sNumber.length>12)

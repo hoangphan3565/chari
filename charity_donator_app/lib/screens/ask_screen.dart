@@ -1,5 +1,4 @@
 
-import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/screens/screens.dart';
 import 'package:charity_donator_app/services/services.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';

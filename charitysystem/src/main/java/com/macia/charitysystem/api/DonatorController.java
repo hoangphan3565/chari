@@ -45,14 +45,14 @@ public class DonatorController {
     @PostMapping("/add_favorite/project/{prjid}/donator_id/{dntid}")
     public ResponseEntity<?> addProjectToFavoriteList(@PathVariable(value = "prjid") Integer prtid,
                                                       @PathVariable(value = "dntid") Integer dntid) {
-        donatorService.addProjectToFavoriteList(prtid, dntid);
+        donatorService.addProjectIdToFavoriteList(prtid, dntid);
         return ResponseEntity.ok(donatorService.findById(dntid));
     }
 
     @PostMapping("/remove_favorite/project/{prjid}/donator_id/{dntid}")
     public ResponseEntity<?> removeProjectFromFavoriteList(@PathVariable(value = "prjid") Integer prtid,
                                                            @PathVariable(value = "dntid") Integer dntid) {
-        donatorService.removeProjectFromFavoriteList(prtid, dntid);
+        donatorService.removeProjectIdFromFavoriteList(prtid, dntid);
         return ResponseEntity.ok(donatorService.findById(dntid));
     }
     @PostMapping("/update/id/{id}")

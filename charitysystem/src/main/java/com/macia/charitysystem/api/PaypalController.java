@@ -13,8 +13,11 @@ import com.macia.charitysystem.utility.MoneyUtility;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -80,10 +83,6 @@ public class PaypalController {
         return "error";
     }
 
-    @GetMapping("/cancel")
-    public String cancelPay() {
-        return "cancel";
-    }
 
     @Transactional
     @GetMapping("/success/donator_id/{did}/project_id/{pid}/money/{money}")
@@ -107,18 +106,19 @@ public class PaypalController {
                             .donateDate(LocalDateTime.now())
                             .money(money)
                             .build());
-                } else {
+                }
+                else {
                     donateDetailsRepository.save(DonateDetails.builder()
                             .donateActivity(donateActivity)
                             .donateDate(LocalDateTime.now())
                             .money(money)
                             .build());
                 }
-                return "Ủng hộ thành công!";
+                return "Quyên góp thành công!";
             }
         } catch (PayPalRESTException e) {
             System.out.println(e.getMessage());
         }
-        return "Chuyển tiền không thành công";
+        return "Thanh toán thất bại!";
     }
 }

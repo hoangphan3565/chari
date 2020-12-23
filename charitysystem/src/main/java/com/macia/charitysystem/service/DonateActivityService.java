@@ -22,16 +22,6 @@ public class DonateActivityService {
         return donateAvtRepo.saveAndFlush(donateActivity);
     }
 
-    public DonateActivity findDonateActivityByDonatorId(Integer id) {
-        try {
-            TypedQuery<DonateActivity> query = em.createNamedQuery("named.donate_activity.findByDonatorId", DonateActivity.class);
-            query.setParameter("dntid", id);
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
     public DonateActivity findDonateActivityByDonatorIdAndProjectID(Integer donator_id, Integer project_id) {
         try {
             TypedQuery<DonateActivity> query = em.createNamedQuery("named.donate_activity.findByDonatorIdAndProjectId", DonateActivity.class);

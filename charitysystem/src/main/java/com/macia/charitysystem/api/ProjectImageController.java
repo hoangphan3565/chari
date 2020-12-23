@@ -16,17 +16,6 @@ public class ProjectImageController {
     private ProjectImagesService projectImagesService;
 
 
-    @GetMapping()
-    public List<String> getAllProjectImg() {
-        List<ImageDTO> imgs = projectImagesService.findAllProjectImages();
-        List<String> list = new ArrayList<>();
-        for (var ImageDTO : imgs) {
-            list.add(ImageDTO.getImageUrl());
-        }
-        return list;
-    }
-
-
     @GetMapping("/project/{id}")
     public List<String> getProjectByTypeId(@PathVariable(value = "id") Integer id) {
         List<ImageDTO> imgs = projectImagesService.findProjectImagesByProjectId(id);

@@ -1,15 +1,15 @@
 import 'dart:async';
-
-import 'package:charity_donator_app/models/models.dart';
-import 'package:charity_donator_app/screens/notifications_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:convert' show utf8;
 
 import 'package:charity_donator_app/API.dart';
+import 'package:charity_donator_app/models/models.dart';
+import 'package:charity_donator_app/screens/notifications_screen.dart';
 import 'package:charity_donator_app/screens/screens.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'screens.dart';
 
 class AppBarScreen extends StatefulWidget {

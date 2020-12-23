@@ -5,15 +5,14 @@ import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/models/models.dart';
 import 'package:charity_donator_app/screens/screens.dart';
+import 'package:charity_donator_app/services/services.dart';
 import 'package:charity_donator_app/utility/utility.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';
-import 'package:charity_donator_app/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class PersonalScreen extends StatefulWidget {
@@ -27,6 +26,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
 
   String fullname;
   String address;
+
 
   initState() {
     _getDonatorDetails();
@@ -45,85 +45,66 @@ class _PersonalScreenState extends State<PersonalScreen> {
     });
   }
 
-  _validateAndChangePassword(String username,String password, String cur_password,String new_password1,String new_password2){
-    String error_message;
+
+  _changePassword(String username,String password, String cur_password,String new_password1,String new_password2) async{
+    String message='';
+    int errorCode=1;
     if(cur_password.length != 0 && new_password1.length !=0 && new_password2.length!=0) {
       if(cur_password==password){
         if(new_password1==new_password2){
           if(new_password1!=password){
-            if(Validate.validatePassword(new_password1)){
-              _changePassword(username, cur_password, new_password1, new_password2);
-            }else{
-              error_message='Mật khẩu mới phải có ít nhất 6 ký tự và gồm chữ và số!';
-            }
-          }else{
-            error_message='Mật khẩu mới phải khác mật khẩu cũ!';
-          }
-        }else{
-          error_message='Mật khẩu mới không trùng khớp!';
-        }
-      }else{
-        error_message='Mật khẩu hiện tại không chính xác!';
-      }
-    }else{
-      error_message='Không được trống thông tin nào';
+            if(CheckString.isMyCustomPassword(new_password1)){
+              String url = baseUrl+"/change/password";
+              final body = jsonEncode(<String, String>{
+                "username":username,
+                "cur_password":cur_password,
+                "password1":new_password1,
+                "password2":new_password2,
+                "user_type":"Donator"
+              });
+              var res = await http.post(url,headers:header,body: body);
+              var jsonResponse = json.decode(utf8.decode(res.bodyBytes));
+              message = jsonResponse['messenger'];
+              errorCode = jsonResponse['errorCode'];
+              if(errorCode == 0){
+                SharedPreferences _prefs = await SharedPreferences.getInstance();
+                _prefs.setString('password',jsonResponse['data']['password']);
+                Navigator.pop(context);
+              }}else{
+              message='Mật khẩu mới phải có ít nhất 6 ký tự và gồm chữ và số!';
+            }}else{
+            message='Mật khẩu mới phải khác mật khẩu cũ!';
+          }}else{
+          message='Mật khẩu mới không trùng khớp!';
+        }}else{
+        message='Mật khẩu hiện tại không chính xác!';
+      }}else{
+      message='Không được trống thông tin nào';
     }
-    if(error_message.length>0){
-      Fluttertoast.showToast(
-          msg: error_message,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.orangeAccent,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-    }
-  }
-
-  _changePassword(String username, String cur_password,String new_password1,String new_password2) async{
-    String url = baseUrl+"/change/password";
-    final body = jsonEncode(<String, String>{
-      "username":username,
-      "cur_password":cur_password,
-      "password1":new_password1,
-      "password2":new_password2,
-      "user_type":"Donator"
-    });
-    var jsonResponse;
-    var res = await http.post(url,headers:header,body: body);
-    jsonResponse = json.decode(utf8.decode(res.bodyBytes));
-    //Hiện thông báo theo messenge được trả về từ server
     Fluttertoast.showToast(
-        msg: jsonResponse['messenger'],
+        msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
+        backgroundColor: errorCode==0? Colors.green:Colors.orangeAccent,
         textColor: Colors.white,
         fontSize: 16.0
     );
-    //Kiem tra API Status - 200 tức là đổi thành công - theo như mô tả từ server.
-    if(res.statusCode == 200){
-      // lưu mật khẩu mới vào SharedPreferences
-      SharedPreferences _prefs = await SharedPreferences.getInstance();
-      _prefs.setString('password',jsonResponse['data']['password']);
-      //Đóng dialog khi đổi mật khẩu thành công
-      Navigator.pop(context);
-    }
   }
 
   _showChangePasswordDialog(BuildContext context) {
     TextEditingController _curPasswordField = TextEditingController();
     TextEditingController _newPasswordField = TextEditingController();
     TextEditingController _reWritePasswordField = TextEditingController();
+    bool notSeePassword = true;
+    bool notSeePassword1 = true;
+    bool notSeePassword2 = true;
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return CustomAlertDialog(
             content: Container(
               width: MediaQuery.of(context).size.width / 1,
-              height: MediaQuery.of(context).size.height / 2.4,
               color: Colors.white,
               child: SingleChildScrollView(
                 child: Column(
@@ -145,22 +126,45 @@ class _PersonalScreenState extends State<PersonalScreen> {
                     RoundedPasswordField(
                       hintText: "Mật khẩu hiện tại",
                       icon: LineAwesomeIcons.alternate_unlock,
-                      obscureText: true,
+                      obscureText: notSeePassword,
                       controller: _curPasswordField,
+                      onTapSuffixIcon: ()=>{
+                        if(notSeePassword==true){
+                          notSeePassword=false
+                          //setState((){notSeePassword=false;})
+                        }else{
+                          //setState((){notSeePassword=true;})
+                          notSeePassword=true
+                        }
+                      },
                       onChanged: (value) {},
                     ),
                     RoundedPasswordField(
                       hintText: "Mật khẩu mới",
                       icon: LineAwesomeIcons.lock_open,
-                      obscureText: true,
+                      obscureText: notSeePassword1,
                       controller: _newPasswordField,
+                      onTapSuffixIcon: ()=>{
+                        if(notSeePassword1==true){
+                          notSeePassword1=false
+                        }else{
+                          notSeePassword1=true
+                        }
+                      },
                       onChanged: (value) {},
                     ),
                     RoundedPasswordField(
                       hintText: "Nhập lại mật khẩu mới",
                       icon: LineAwesomeIcons.lock,
-                      obscureText: true,
+                      obscureText: notSeePassword2,
                       controller: _reWritePasswordField,
+                      onTapSuffixIcon: ()=>{
+                        if(notSeePassword2==true){
+                          notSeePassword2=false
+                        }else{
+                          notSeePassword2=true
+                        }
+                      },
                       onChanged: (value) {},
                     ),
 
@@ -168,7 +172,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                       text: "Xác nhận",
                       press: ()async{
                         SharedPreferences _prefs = await SharedPreferences.getInstance();
-                        _validateAndChangePassword(_prefs.getString('username'),_prefs.getString('password'),_curPasswordField.text,_newPasswordField.text,_reWritePasswordField.text);
+                        _changePassword(_prefs.getString('username'),_prefs.getString('password'),_curPasswordField.text,_newPasswordField.text,_reWritePasswordField.text);
                       },
                     ),
 
@@ -223,7 +227,6 @@ class _PersonalScreenState extends State<PersonalScreen> {
           return CustomAlertDialog(
             content: Container(
               width: MediaQuery.of(context).size.width / 1,
-              height: MediaQuery.of(context).size.height / 3,
               color: Colors.white,
               child: SingleChildScrollView(
                 child: Column(
@@ -244,14 +247,18 @@ class _PersonalScreenState extends State<PersonalScreen> {
                     SizedBox(height: 5),
                     RoundedInputField(
                       icon: Icons.person,
+                      hintText: 'Họ và tên',
                       keyboardType: TextInputType.name,
                       controller: _fullnameField,
+                      onTopClearIcon: ()=>{_fullnameField.clear()},
                       onChanged: (value) {},
                     ),
                     RoundedInputField(
                       icon: LineAwesomeIcons.address_card,
+                      hintText: 'Địa chỉ',
                       keyboardType: TextInputType.streetAddress,
                       controller: _addressField,
+                      onTopClearIcon: ()=>{_addressField.clear()},
                       onChanged: (value) {},
                     ),
 

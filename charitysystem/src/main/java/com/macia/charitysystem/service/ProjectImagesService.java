@@ -14,21 +14,6 @@ public class ProjectImagesService {
     @PersistenceContext
     private EntityManager em;
 
-    public List<ImageDTO> findAllProjectImages() {
-        TypedQuery<ImageDTO> query = em.createNamedQuery("named.projectImages.findAll", ImageDTO.class);
-        return query.getResultList();
-    }
-
-    public ImageDTO findProjectImagesById(Integer id) {
-        try {
-            TypedQuery<ImageDTO> query = em.createNamedQuery("named.projectImages.findById", ImageDTO.class);
-            query.setParameter("id", id);
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
     public List<ImageDTO> findProjectImagesByProjectId(Integer id) {
         TypedQuery<ImageDTO> query = em.createNamedQuery("named.projectImages.findByProjectId", ImageDTO.class);
         query.setParameter("id", id);

@@ -1,25 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/models/project_model.dart';
-import 'package:charity_donator_app/screens/screens.dart';
 import 'package:charity_donator_app/services/donate_services.dart';
-import 'package:charity_donator_app/utility/utility.dart';
-import 'package:charity_donator_app/widgets/custom_alert_dialog.dart';
-import 'package:charity_donator_app/widgets/widgets.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
-import 'package:http/http.dart' as http;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 
 
@@ -240,44 +230,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
-  Container buildDonatorInfo(){
-    return Container(
-      margin: EdgeInsets.fromLTRB(8,5,8,5),
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Nhà hảo tâm",
-            style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.black
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            "xxxxxxxx231",
-            style: TextStyle(
-                fontSize: 12,
-                color: Colors.black54),
-          ),
-          SizedBox(height:5),
-          Container(
-            height: 1,
-            color: Colors.grey[300],
-            margin: EdgeInsets.symmetric(horizontal: 0),
-          ),
-        ],
-      ),
-    );
-  }
 
   Container buildProjectDetails(Project project){
     return Container(
@@ -377,6 +329,45 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   }
 
   //Mới chỉ là giao diện - sẽ phát triển chức năng này sau
+
+  // Container buildDonatorInfo(){
+  //   return Container(
+  //     margin: EdgeInsets.fromLTRB(8,5,8,5),
+  //     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(5),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           "Nhà hảo tâm",
+  //           style: TextStyle(
+  //               fontSize: 15,
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.black
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           height: 5,
+  //         ),
+  //         Text(
+  //           "xxxxxxxx231",
+  //           style: TextStyle(
+  //               fontSize: 12,
+  //               color: Colors.black54),
+  //         ),
+  //         SizedBox(height:5),
+  //         Container(
+  //           height: 1,
+  //           color: Colors.grey[300],
+  //           margin: EdgeInsets.symmetric(horizontal: 0),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // Container buildDonatorsList(){
   //   return Container(

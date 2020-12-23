@@ -1,14 +1,10 @@
-import 'dart:convert';
 
-import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/models/models.dart';
 import 'package:charity_donator_app/screens/screens.dart';
-import 'package:charity_donator_app/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -114,7 +110,7 @@ class _HistoryScreenState extends State<HistoryScreen>{
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: 300,
+            width: 280,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

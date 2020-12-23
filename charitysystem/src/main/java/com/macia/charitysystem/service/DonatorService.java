@@ -31,13 +31,13 @@ public class DonatorService {
         }
     }
 
-    public void addProjectToFavoriteList(Integer projectId, Integer donatorid) {
+    public void addProjectIdToFavoriteList(Integer projectId, Integer donatorid) {
         Donator donator = donatorRepo.findById(donatorid).orElseThrow();
         donator.setFavoriteProject(donator.getFavoriteProject() + projectId.toString() + " ");
         donatorRepo.saveAndFlush(donator);
     }
 
-    public void removeProjectFromFavoriteList(Integer projectId, Integer donatorid) {
+    public void removeProjectIdFromFavoriteList(Integer projectId, Integer donatorid) {
         Donator donator = donatorRepo.findById(donatorid).orElseThrow();
         String[] curFavoriteList = donator.getFavoriteProject().split(" "); // "1 2 10 11 " -> [1,2,10,11,]
         StringBuilder sb = new StringBuilder();

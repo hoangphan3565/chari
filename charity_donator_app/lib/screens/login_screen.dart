@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:charity_donator_app/API.dart';
 import 'package:charity_donator_app/constants.dart';
 import 'package:charity_donator_app/screens/screens.dart';
+import 'package:charity_donator_app/utility/utility.dart';
 import 'package:charity_donator_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,11 +19,23 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>{
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-
+  bool notSeePassword = true;
   _validateAndLogin(String username, String password){
-    if(username.length==0||password.length==0){
+    String error_message='';
+    if(username.length != 0 && password.length !=0) {
+      if(username.length==10 && CheckString.onlyNumber(username)){
+        if(CheckString.isMyCustomPassword(password)){
+          _logIn(username, password);
+        }else{
+          error_message='Sai SĐT hoặc mật khẩu!';
+        }}else{
+        error_message='Sai SĐT hoặc mật khẩu!';
+      }}else{
+      error_message='Không được trống thông tin nào!';
+    }
+    if(error_message.length>0){
       Fluttertoast.showToast(
-          msg: 'Không được để trống thông tin nào!',
+          msg: error_message,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -30,11 +43,8 @@ class _LoginScreenState extends State<LoginScreen>{
           textColor: Colors.white,
           fontSize: 16.0
       );
-      return;
     }
-    _logIn(username, password);
   }
-
   _logIn(String username, String password) async{
     String url = baseUrl+login;
     final body = jsonEncode(<String, String>{
@@ -125,13 +135,21 @@ class _LoginScreenState extends State<LoginScreen>{
                   icon: LineAwesomeIcons.phone,
                   keyboardType: TextInputType.number,
                   controller: _usernameController,
+                  onTopClearIcon: ()=>{_usernameController.clear()},
                   onChanged: (value) {},
                 ),
                 RoundedPasswordField(
                   hintText: "Nhập mật khẩu",
-                  obscureText: true,
+                  obscureText: notSeePassword,
                   icon: LineAwesomeIcons.lock,
                   controller: _passwordController,
+                  onTapSuffixIcon: ()=>{
+                    if(notSeePassword==true){
+                      setState((){notSeePassword=false;})
+                    }else{
+                      setState((){notSeePassword=true;})
+                    }
+                  },
                   onChanged: (value) {},
                 ),
                 RoundedButton(
