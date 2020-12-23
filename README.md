@@ -4,6 +4,5 @@
 
 # Database - PostgreSQL
 
-# Frontend - Flutter với 2 module
+# Frontend - Flutter
 # 1. Mobile app cho nhà từ thiện
-# 2. Mobile cho các cộng tác viên từ thiện
