@@ -154,7 +154,5 @@ class _AppBarScreenState extends State<AppBarScreen> {
               : PersonalScreen(donator: this.donator))
     );
   }
-
-
 }
 

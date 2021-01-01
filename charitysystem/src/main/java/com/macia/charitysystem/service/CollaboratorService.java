@@ -10,8 +10,6 @@ import javax.persistence.PersistenceContext;
 
 @Service
 public class CollaboratorService {
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private CollaboratorRepository collaboratorRepo;

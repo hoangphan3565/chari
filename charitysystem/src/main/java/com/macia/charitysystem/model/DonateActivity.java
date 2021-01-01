@@ -16,10 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @NamedQueries({
-        @NamedQuery(name = "named.donate_activity.findAll",
-                query = "SELECT da FROM DonateActivity da"),
-        @NamedQuery(name = "named.donate_activity.findByDonatorId",
-                query = "SELECT da FROM DonateActivity da where da.donator.DNT_ID =:dntid"),
         @NamedQuery(name = "named.donate_activity.findByDonatorIdAndProjectId",
                 query = "SELECT da FROM DonateActivity da where da.donator.DNT_ID =:did and da.project.PRJ_ID =:pid"),
 })

@@ -362,8 +362,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                       press: () async {
                         SharedPreferences prefs = await SharedPreferences.getInstance();
                         await prefs.clear();
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (BuildContext ctx) => AppBarScreen()));
+                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (BuildContext ctx) => AppBarScreen()));
                       },
                     ),
                   ]

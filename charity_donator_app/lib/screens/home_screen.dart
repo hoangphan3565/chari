@@ -25,13 +25,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>{
 
-  // TextEditingController _moneyControllerField = TextEditingController();
-  // TextEditingController _messageControllerField = TextEditingController();
-  // String donate_money="";
-
   int _selectedProjectType  = 0;
   var listProjectIdFavorite = new List<String>();
-
 
 
   @override
@@ -167,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen>{
 
   _changeStateFavorite(int project_id,bool curstate)async{
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    if(_prefs.get("username") == null){
+    if(_prefs.get("donator_id") == null){
       _showDialogAskForLoginOrRegister(context);
       return;
     }

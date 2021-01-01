@@ -1,8 +1,5 @@
 package com.macia.charitysystem;
 
-import com.macia.charitysystem.model.Donator;
-import com.macia.charitysystem.service.DonatorService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,14 +12,14 @@ import java.sql.Statement;
 @SpringBootApplication
 public class CharitysystemApplication implements CommandLineRunner {
 
-    @Autowired
-    DonatorService donatorService;
-
     public static void main(String[] args)  throws SQLException {
         SpringApplication.run(CharitysystemApplication.class, args);
 
+
         //Connect to existing database
+        //String url = "jdbc:postgresql://172.107.32.124:17024/chari?user=hoang&password=12345678";
         String url = "jdbc:postgresql://localhost:5432/charitysystem?user=postgres&password=123";
+
         Connection conn = DriverManager.getConnection(url);
         //Creating the Statement
         Statement stmt = conn.createStatement();

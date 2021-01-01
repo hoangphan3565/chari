@@ -2,12 +2,11 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 
 const url = {
-    //baseUrl: "http://192.168.137.1:8080/api",
-    baseUrl: "http://192.168.43.139:8080/api",
-    projectTypes: "/projecttypes",
+    baseUrl: "http://192.168.137.1:8080/api",
+    projectTypes: "/project_types",
     students: "/students",
     donators: "/donators",
-    supportedpeoples: "/supportedpeoples",
+    supportedpeoples: "/supported_peoples",
     login: "/login"
 };
 

@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 
 @Service
 public class DonateActivityService {
+
     @PersistenceContext
     private EntityManager em;
 

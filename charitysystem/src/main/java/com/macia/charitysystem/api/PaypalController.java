@@ -109,10 +109,10 @@ public class PaypalController {
                 }
                 else {
                     donateDetailsRepository.save(DonateDetails.builder()
-                            .donateActivity(donateActivity)
-                            .donateDate(LocalDateTime.now())
-                            .money(money)
-                            .build());
+                                                .donateActivity(donateActivity)
+                                                .donateDate(LocalDateTime.now())
+                                                .money(money)
+                                                .build());
                 }
                 return "Quyên góp thành công!";
             }

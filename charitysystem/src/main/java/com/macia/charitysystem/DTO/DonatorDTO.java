@@ -14,5 +14,4 @@ public class DonatorDTO {
     private String address;
     private String phoneNumber;
     private String sumDonate;
-    //private List<DonateDetailsDTO> donateDetailsDTOs;
 }

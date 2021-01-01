@@ -18,31 +18,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @NamedQueries({
-        @NamedQuery(name = "named.project.findAll",
-                query = "SELECT p FROM Project p"),
         @NamedQuery(name = "named.project.findById",
                 query = "SELECT p FROM Project p where p.PRJ_ID =:id"),
-        @NamedQuery(name = "named.project.findByProjectTypeId",
-                query = "SELECT p FROM Project p where p.projectType.PRT_ID =:id"),
-        @NamedQuery(name = "named.project.findAllProjectLikeProjectName",
-                query = "from Project p where LOWER(p.projectName) like '%' || LOWER(:projectName) ||'%'"),
 })
 @NamedStoredProcedureQueries({
         @NamedStoredProcedureQuery(
                 name = "named_getProjectDTOList",
                 resultSetMappings = "ProjectMapping",
                 procedureName = "get_projects_dto"
-        ),
-
-        @NamedStoredProcedureQuery(
-                name = "named_getProjectDTOListByType",
-                resultSetMappings = "ProjectMapping",
-                procedureName = "get_projects_dto_by_type",
-                parameters = {
-                        @StoredProcedureParameter(name = "prtid",
-                                mode = ParameterMode.IN,
-                                type = Integer.class)
-                }
         ),
 })
 @SqlResultSetMappings({

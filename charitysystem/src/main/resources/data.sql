@@ -56,7 +56,7 @@ values('G10002','Chia sẻ khó khăn học sinh nghèo vùng biên giới',
          '
         Rất mong quý nhà hảo tâm cùng Chari chung tay ủng hộ cho các em học sinh biên giới có cơ hội được cắp sách tới trường, thực hiện ước mơ học tập của em, nâng bước các em tới tương lai tươi đẹp hơn.',
 '2020-12-01','2021-1-31',75352000,
-'https://gialai.gov.vn/Lists/TinTucSuKien/Attachments/63615/giao%20duc.jpg',
+'https://file1.dangcongsan.vn/DATA/0/2016/10/images1068981_hoc_sinh_ngheo-15_12_21_498.jpg',
 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',1,1,1);
 
 insert into project(project_code,project_name,brief_description,description,start_date,end_date,target_money,image_url,video_url,prt_id,stp_id,clb_id)

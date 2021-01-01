@@ -69,6 +69,7 @@ class FeedBackService{
           );
         });
   }
+
   static validateAndSendFeedback(String contributor,String title,String description,BuildContext context) async{
     String message;
     int errorCode;

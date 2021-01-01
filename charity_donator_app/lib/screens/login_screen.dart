@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen>{
         _prefs.setInt('donator_id',jsRes2['dnt_ID']);
         if(jsRes2['address']==null){_prefs.setString('donator_address','');
         }else{_prefs.setString('donator_address',jsRes2['address'].toString());
-        }if(jsRes2['fullName']==null){_prefs.setString('donator_full_name','Nhà hảo tâm');
+        }if(jsRes2['fullName']==null){_prefs.setString('donator_full_name','');
         }else{_prefs.setString('donator_full_name',jsRes2['fullName'].toString());
         }if(jsRes2['avatarUrl']==null){_prefs.setString('donator_avatar_url','https://1.bp.blogspot.com/-kFguDxc0qe4/XyzyK1y6eiI/AAAAAAAAwW8/XcAuOQ2qvQYhoDe4Bv0eLX9eye7FnmKKgCLcBGAsYHQ/s1600/co-4-la%2B%25283%2529.jpg');
         }else{_prefs.setString('donator_avatar_url',jsRes2['avatarUrl'].toString());
@@ -94,7 +94,6 @@ class _LoginScreenState extends State<LoginScreen>{
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=> AppBarScreen()), (Route<dynamic> route) => false);
       }
     }
-
     Fluttertoast.showToast(
         msg: jsRes['messenger'],
         toastLength: Toast.LENGTH_SHORT,
